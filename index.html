@@ -178,6 +178,16 @@
         .dark-mode .text-gray-900 {
             color: #f7fafc;
         }
+
+        .milestone-row {
+            background-color: #d4f9cd;
+            /* Tailwind yellow-100 */
+        }
+
+        .dark-mode .milestone-row {
+            background-color: #436736 !important;
+            /* Tailwind yellow-800 for dark mode */
+        }
     </style>
 </head>
 
@@ -807,20 +817,20 @@
         };
 
         const DEFAULTS = {
-            netWorth: 22000,
+            netWorth: 25000,
             income: 85000,
-            expenses: 42500,
+            expenses: 55000,
             taxFilingStatus: 'single',
-            customTaxRate: 20,
-            currentAge: 33,
+            customTaxRate: 22,
+            currentAge: 30,
             annualIncomeIncrease: 2,
             investmentReturnRate: 8,
             inflationRate: 3,
             safeWithdrawalRate: 4,
-            retirementAge: 65,
-            retirementExpenses: 50000,
-            retirementIncome: 0,
-            lifeExpectancy: 90
+            retirementAge: 62,
+            retirementExpenses: 60000,
+            retirementIncome: 25000,
+            lifeExpectancy: 80
         };
 
         const state = {
@@ -1252,8 +1262,28 @@
 
             state.projection.forEach((yearData, index) => {
                 let rowClass = 'border-b hover:bg-gray-50';
+                let milestoneIcon = '';
+                let isMilestoneRow = false;
+                // Only show the emoji the first time net worth crosses the threshold
+                if (
+                    yearData.netWorth >= 1000000 &&
+                    (index === 0 || state.projection[index - 1].netWorth < 1000000)
+                ) {
+                    milestoneIcon = `<span class=\"has-tooltip\" style=\"margin-left:4px; font-size:1.3em;\">🤑<span class=\"tooltip-text\">Millionaire Milestone</span></span>`;
+                    isMilestoneRow = true;
+                }
+                if (
+                    yearData.netWorth >= 10000000 &&
+                    (index === 0 || state.projection[index - 1].netWorth < 10000000)
+                ) {
+                    milestoneIcon += `<span class=\"has-tooltip\" style=\"margin-left:4px; font-size:1.3em;\">🤑<span class=\"tooltip-text\">Decamilionaire Milestone</span></span>`;
+                    isMilestoneRow = true;
+                }
+                if (isMilestoneRow) {
+                    rowClass += ' milestone-row'; // Use custom class for milestone row
+                }
                 if (index > 0 && yearData.netWorth < state.projection[index - 1].netWorth) {
-                    rowClass += ' bg-red-100'; // Add light red background
+                    rowClass += ' bg-red-100 dark:bg-red-900'; // Add light/dark red background
                 }
 
                 // Find and display events for the current year
@@ -1310,7 +1340,7 @@
                         </span>
                     </td>
                     <td class="px-6 py-3 text-sm text-gray-500">${eventsForYear}</td>
-                    <td class="px-6 py-3 text-sm text-gray-500 font-bold">${formatCurrency(yearData.netWorth)}</td>
+                    <td class="px-6 py-3 text-sm text-gray-500 font-bold">${formatCurrency(yearData.netWorth)} ${milestoneIcon}</td>
                 `;
                 tableBody.appendChild(row);
             });
