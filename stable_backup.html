@@ -278,7 +278,7 @@
                             <!-- Edit Initial Data Button with Tooltip -->
                             <div class="relative button-tooltip-container">
                                 <button id="edit-initial-data-btn"
-                                    class="text-sm md:text-md text-white bg-green-500 hover:bg-green-600 px-3 py-2 rounded-full shadow focus:outline-none focus:ring-1 focus:ring-green-400 transition duration-150 ease-in-out opacity-70 hover:opacity-100">
+                                    class="text-sm md:text-md text-white bg-green-600 hover:bg-green-600 px-3 py-2 rounded-full shadow focus:outline-none focus:ring-1 focus:ring-green-400 transition duration-150 ease-in-out opacity-70 hover:opacity-100">
                                     <i class="fas fa-edit"></i>
                                 </button>
                                 <span class="button-tooltip-text">Edit Initial Data</span>
@@ -360,7 +360,7 @@
                                     </button>
                                 </div>
                             </div>
-                            <p id="savings-target" class="text-4xl font-bold text-green-500 mt-2"></p>
+                            <p id="savings-target" class="text-4xl font-bold text-green-600 mt-2"></p>
                         </div>
                         <!-- New Net Worth Required to Retire Card -->
                         <div class="bg-white rounded-2xl p-6 shadow-md flex flex-col justify-between">
@@ -378,7 +378,7 @@
                                     </button>
                                 </div>
                             </div>
-                            <p id="fi-number-display" class="text-4xl font-bold text-green-500 mt-2"></p>
+                            <p id="fi-number-display" class="text-4xl font-bold text-green-600 mt-2"></p>
                             <p class="text-sm mt-2 text-gray-500">Based on your annual expenses and safe withdrawal
                                 rate.</p>
                         </div>
@@ -397,7 +397,7 @@
                                     </button>
                                 </div>
                             </div>
-                            <p id="fi-age" class="text-4xl font-bold text-teal-600 mt-2"></p>
+                            <p id="fi-age" class="text-4xl font-bold text-green-600 mt-2"></p>
                             <p id="fi-message" class="text-sm text-gray-500"></p>
                         </div>
                         <div id="zero-age-card"
@@ -1142,12 +1142,12 @@
 
                 const savingsTarget = state.projection[0]?.savings || 0;
                 document.getElementById('savings-target').innerText = formatCurrency(savingsTarget);
-                document.getElementById('savings-target').className = 'text-4xl font-bold text-green-500 mt-2';
+                document.getElementById('savings-target').className = 'text-4xl font-bold text-green-600 mt-2';
 
                 // Update Net Worth Required to Retire
                 const fiNumber = state.initialData.retirementExpenses / (state.initialData.safeWithdrawalRate / 100);
                 document.getElementById('fi-number-display').innerText = formatCurrency(fiNumber);
-                document.getElementById('fi-number-display').className = 'text-4xl font-bold text-green-500 mt-2';
+                document.getElementById('fi-number-display').className = 'text-4xl font-bold text-green-600 mt-2';
 
                 // Update Age of Financial Independence
                 const fiAgeElement = document.getElementById('fi-age');
@@ -1156,12 +1156,12 @@
                     fiAgeElement.innerText = "Not projected";
                     fiMessageElement.innerText = "You might not reach financial independence before your target retirement age.";
                     fiAgeElement.classList.add('text-rose-600');
-                    fiAgeElement.classList.remove('text-teal-600');
+                    fiAgeElement.classList.remove('text-green-600');
                 } else {
                     fiAgeElement.innerText = formatAge(state.fiAge);
                     fiMessageElement.innerText = "When passive income covers expenses.";
                     fiAgeElement.classList.remove('text-rose-600');
-                    fiAgeElement.classList.add('text-teal-600');
+                    fiAgeElement.classList.add('text-green-600');
                 }
 
                 // Update Net Worth Hits $0 section
@@ -1171,8 +1171,8 @@
                 if (state.zeroAge === null) {
                     zeroAgeElement.innerText = 'Beyond life expectancy';
                     zeroAgeMessageElement.innerText = 'Based on current projections, your funds will last beyond your life expectancy.';
-                    zeroAgeElement.className = 'text-4xl font-bold text-green-500 mt-2';
-                    zeroAgeMessageElement.className = 'text-sm text-green-500';
+                    zeroAgeElement.className = 'text-4xl font-bold text-green-600 mt-2';
+                    zeroAgeMessageElement.className = 'text-sm text-green-600';
                 } else if (state.zeroAge < state.initialData.retirementAge) {
                     zeroAgeElement.innerText = formatAge(state.zeroAge);
                     zeroAgeMessageElement.innerText = 'You may run out of money before your target retirement age.';
@@ -1192,7 +1192,7 @@
                     retirementMessage.className = 'text-sm mt-2 font-medium text-rose-500';
                 } else {
                     retirementMessage.innerText = 'You are on track to retire at your goal age!';
-                    retirementMessage.className = 'text-sm mt-2 font-medium text-green-500';
+                    retirementMessage.className = 'text-sm mt-2 font-medium text-green-600';
                 }
 
                 renderLifeEvents();
