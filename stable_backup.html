@@ -24,6 +24,9 @@
             cursor: pointer;
             color: #4C51BF; /* Tailwind indigo-700 */
         }
+        .dark-mode .event-link {
+            color: #a3bffa; /* Tailwind indigo-300 for better contrast in dark mode */
+        }
         
         /* Custom Tooltip Styles for the Expenses, Taxes and Savings columns */
         .has-tooltip {
@@ -631,9 +634,11 @@
                 if (enabled) {
                     lightIcon.classList.add('hidden');
                     darkIcon.classList.remove('hidden');
+                    darkIcon.style.color = '#6366F1'; // Indigo-500 for better contrast
                 } else {
                     lightIcon.classList.remove('hidden');
                     darkIcon.classList.add('hidden');
+                    darkIcon.style.color = ''; // Reset to default
                 }
             }
         };
