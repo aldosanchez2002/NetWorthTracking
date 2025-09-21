@@ -695,7 +695,7 @@
             const inflationRateDec = inflationRate / 100;
             const swrDecimal = safeWithdrawalRate / 100;
             
-            const fiNumber = (retirementExpenses * 12) / swrDecimal;
+            const fiNumber = retirementExpenses / swrDecimal;
             
             // Map life events by age for quick lookup
             const eventsByAge = state.lifeEvents.reduce((acc, event) => {
@@ -897,7 +897,7 @@
 
                 // Retirement message logic
                 const retirementMessage = document.getElementById('retirement-message');
-                const fiNumber = (state.initialData.retirementExpenses * 12) / (state.initialData.safeWithdrawalRate / 100);
+                const fiNumber = state.initialData.retirementExpenses / (state.initialData.safeWithdrawalRate / 100);
                 if (projectedNetWorth < fiNumber) {
                     retirementMessage.innerText = 'You are not on track to retire at your goal age.';
                     retirementMessage.classList.remove('text-green-500');
