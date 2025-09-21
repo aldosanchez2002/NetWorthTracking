@@ -178,6 +178,16 @@
         .dark-mode .text-gray-900 {
             color: #f7fafc;
         }
+
+        .milestone-row {
+            background-color: #d4f9cd;
+            /* Tailwind yellow-100 */
+        }
+
+        .dark-mode .milestone-row {
+            background-color: #436736 !important;
+            /* Tailwind yellow-800 for dark mode */
+        }
     </style>
 </head>
 
@@ -256,6 +266,15 @@
                     <div class="flex justify-between items-center mb-4">
                         <h1 class="text-3xl font-bold text-gray-800">Financial Dashboard</h1>
                         <div class="flex space-x-2">
+                            <script src='https://storage.ko-fi.com/cdn/scripts/overlay-widget.js'></script>
+                            <script>
+                                kofiWidgetOverlay.draw('personalfinancialprojection', {
+                                    'type': 'floating-chat',
+                                    'floating-chat.donateButton.text': 'Donate',
+                                    'floating-chat.donateButton.background-color': '#4C51BF',
+                                    'floating-chat.donateButton.text-color': '#fff'
+                                });
+                            </script>
                             <!-- Edit Initial Data Button with Tooltip -->
                             <div class="relative button-tooltip-container">
                                 <button id="edit-initial-data-btn"
@@ -341,7 +360,7 @@
                                     </button>
                                 </div>
                             </div>
-                            <p id="savings-target" class="text-4xl font-bold text-emerald-600 mt-2"></p>
+                            <p id="savings-target" class="text-4xl font-bold text-green-500 mt-2"></p>
                         </div>
                         <!-- New Net Worth Required to Retire Card -->
                         <div class="bg-white rounded-2xl p-6 shadow-md flex flex-col justify-between">
@@ -359,7 +378,7 @@
                                     </button>
                                 </div>
                             </div>
-                            <p id="fi-number-display" class="text-4xl font-bold text-gray-900 mt-2"></p>
+                            <p id="fi-number-display" class="text-4xl font-bold text-green-500 mt-2"></p>
                             <p class="text-sm mt-2 text-gray-500">Based on your annual expenses and safe withdrawal
                                 rate.</p>
                         </div>
@@ -407,7 +426,7 @@
                         <div class="flex justify-between items-center mb-4">
                             <h2 class="text-2xl font-bold text-gray-800 mb-4">Projection Charts</h2>
                             <button id="add-life-event-btn-charts"
-                                class="bg-indigo-600 text-white px-3 py-1 rounded-full text-sm shadow-sm hover:bg-indigo-700 hover:scale-105 transition-transform duration-200 opacity-80">
+                                class="bg-indigo-600 text-white px-4 py-2 rounded-lg shadow-sm hover:bg-indigo-700 hover:scale-105 transition-transform duration-200">
                                 Add a Life Event
                             </button>
                         </div>
@@ -1123,10 +1142,12 @@
 
                 const savingsTarget = state.projection[0]?.savings || 0;
                 document.getElementById('savings-target').innerText = formatCurrency(savingsTarget);
+                document.getElementById('savings-target').className = 'text-4xl font-bold text-green-500 mt-2';
 
                 // Update Net Worth Required to Retire
                 const fiNumber = state.initialData.retirementExpenses / (state.initialData.safeWithdrawalRate / 100);
                 document.getElementById('fi-number-display').innerText = formatCurrency(fiNumber);
+                document.getElementById('fi-number-display').className = 'text-4xl font-bold text-green-500 mt-2';
 
                 // Update Age of Financial Independence
                 const fiAgeElement = document.getElementById('fi-age');
@@ -1150,38 +1171,29 @@
                 if (state.zeroAge === null) {
                     zeroAgeElement.innerText = 'Beyond life expectancy';
                     zeroAgeMessageElement.innerText = 'Based on current projections, your funds will last beyond your life expectancy.';
-                    zeroAgeElement.classList.add('text-green-500');
-                    zeroAgeElement.classList.remove('text-rose-600');
-                    zeroAgeMessageElement.classList.add('text-green-500');
-                    zeroAgeMessageElement.classList.remove('text-rose-500');
+                    zeroAgeElement.className = 'text-4xl font-bold text-green-500 mt-2';
+                    zeroAgeMessageElement.className = 'text-sm text-green-500';
                 } else if (state.zeroAge < state.initialData.retirementAge) {
                     zeroAgeElement.innerText = formatAge(state.zeroAge);
                     zeroAgeMessageElement.innerText = 'You may run out of money before your target retirement age.';
-                    zeroAgeElement.classList.remove('text-green-500');
-                    zeroAgeElement.classList.add('text-rose-600');
-                    zeroAgeMessageElement.classList.add('text-rose-500');
-                    zeroAgeMessageElement.classList.remove('text-green-500');
+                    zeroAgeElement.className = 'text-4xl font-bold text-rose-600 mt-2';
+                    zeroAgeMessageElement.className = 'text-sm text-rose-500';
                 } else {
                     zeroAgeElement.innerText = formatAge(state.zeroAge);
                     zeroAgeMessageElement.innerText = 'Based on retirement spending.';
-                    zeroAgeElement.classList.remove('text-green-500');
-                    zeroAgeElement.classList.remove('text-rose-600');
-                    zeroAgeMessageElement.classList.remove('text-rose-500');
-                    zeroAgeMessageElement.classList.remove('text-green-500');
+                    zeroAgeElement.className = 'text-4xl font-bold';
+                    zeroAgeMessageElement.className = 'text-sm';
                 }
 
                 // Retirement message logic
                 const retirementMessage = document.getElementById('retirement-message');
                 if (projectedNetWorth < fiNumber) {
                     retirementMessage.innerText = 'You are not on track to retire at your goal age.';
-                    retirementMessage.classList.remove('text-green-500');
-                    retirementMessage.classList.add('text-rose-500');
+                    retirementMessage.className = 'text-sm mt-2 font-medium text-rose-500';
                 } else {
                     retirementMessage.innerText = 'You are on track to retire at your goal age!';
-                    retirementMessage.classList.remove('text-rose-500');
-                    retirementMessage.classList.add('text-green-500');
+                    retirementMessage.className = 'text-sm mt-2 font-medium text-green-500';
                 }
-
 
                 renderLifeEvents();
                 renderProjectionTable();
@@ -1252,8 +1264,28 @@
 
             state.projection.forEach((yearData, index) => {
                 let rowClass = 'border-b hover:bg-gray-50';
+                let milestoneIcon = '';
+                let isMilestoneRow = false;
+                // Only show the emoji the first time net worth crosses the threshold
+                if (
+                    yearData.netWorth >= 1000000 &&
+                    (index === 0 || state.projection[index - 1].netWorth < 1000000)
+                ) {
+                    milestoneIcon = `<span class=\"has-tooltip\" style=\"margin-left:4px; font-size:1.3em;\">🤑<span class=\"tooltip-text\">Millionaire Milestone</span></span>`;
+                    isMilestoneRow = true;
+                }
+                if (
+                    yearData.netWorth >= 10000000 &&
+                    (index === 0 || state.projection[index - 1].netWorth < 10000000)
+                ) {
+                    milestoneIcon += `<span class=\"has-tooltip\" style=\"margin-left:4px; font-size:1.3em;\">🤑<span class=\"tooltip-text\">Decamilionaire Milestone</span></span>`;
+                    isMilestoneRow = true;
+                }
+                if (isMilestoneRow) {
+                    rowClass += ' milestone-row'; // Use custom class for milestone row
+                }
                 if (index > 0 && yearData.netWorth < state.projection[index - 1].netWorth) {
-                    rowClass += ' bg-red-100'; // Add light red background
+                    rowClass += ' bg-red-100 dark:bg-red-900'; // Add light/dark red background
                 }
 
                 // Find and display events for the current year
@@ -1310,7 +1342,7 @@
                         </span>
                     </td>
                     <td class="px-6 py-3 text-sm text-gray-500">${eventsForYear}</td>
-                    <td class="px-6 py-3 text-sm text-gray-500 font-bold">${formatCurrency(yearData.netWorth)}</td>
+                    <td class="px-6 py-3 text-sm text-gray-500 font-bold">${formatCurrency(yearData.netWorth)} ${milestoneIcon}</td>
                 `;
                 tableBody.appendChild(row);
             });
