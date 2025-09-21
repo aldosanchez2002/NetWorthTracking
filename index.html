@@ -188,8 +188,9 @@
         <div id="initial-screen" class="app-screen min-h-screen flex items-center justify-center p-4">
             <div class="absolute top-4 right-4 z-50">
                 <button id="initial-screen-dark-mode-toggle"
-                    class="bg-gray-200 dark:bg-gray-700 p-2 rounded-full shadow-md transition-colors duration-200 ease-in-out">
-                    <i class="fas fa-moon text-gray-800 dark:text-yellow-400"></i>
+                    class="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-yellow-400 text-sm md:text-md px-3 py-2 rounded-full shadow focus:outline-none focus:ring-1 focus:ring-yellow-300 transition-colors duration-200 ease-in-out opacity-70 hover:opacity-100">
+                    <i class="fas fa-sun light-icon"></i>
+                    <i class="fas fa-moon dark-icon hidden"></i>
                 </button>
             </div>
             <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-xl">
@@ -217,7 +218,7 @@
                             <option value="single">Single</option>
                             <option value="married">Married Filing Jointly</option>
                             <option value="headOfHousehold">Head of Household</option>
-                            <option value="custom">Custom Rate</option>
+                            <option value="custom">Custom Rate (Deductions/Credits, W-4, W-9, etc.)</option>
                         </select>
                     </div>
                     <div id="customTaxRateContainer" class="hidden">
@@ -692,7 +693,7 @@
                 </div>
                 <div id="editCustomTaxRateContainer" class="hidden">
                     <label for="editCustomTaxRate" class="block text-sm font-medium text-gray-700">Custom Annual Tax
-                        Rate (%)</label>
+                        Rate (Cumulative %)</label>
                     <input type="number" id="editCustomTaxRate" name="customTaxRate"
                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-150 ease-in-out">
                 </div>
@@ -783,20 +784,15 @@
             }
             // Update chart colors
             if (netWorthChart) updateChartColors();
-            // Update the icon
-            const lightIcon = document.querySelector('.light-icon');
-            const darkIcon = document.querySelector('.dark-icon');
-            if (lightIcon && darkIcon) {
-                if (enabled) {
-                    lightIcon.classList.add('hidden');
-                    darkIcon.classList.remove('hidden');
-                    darkIcon.style.color = '#6366F1'; // Indigo-500 for better contrast
-                } else {
-                    lightIcon.classList.remove('hidden');
-                    darkIcon.classList.add('hidden');
-                    darkIcon.style.color = ''; // Reset to default
-                }
-            }
+
+            // Update all dark mode toggle icons
+            document.querySelectorAll('.light-icon').forEach(icon => {
+                icon.classList.toggle('hidden', enabled);
+            });
+            document.querySelectorAll('.dark-icon').forEach(icon => {
+                icon.classList.toggle('hidden', !enabled);
+                icon.style.color = enabled ? '#6366F1' : ''; // Indigo-500 for moon in dark mode
+            });
         };
 
         const toggleDarkMode = () => {
