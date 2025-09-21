@@ -85,6 +85,36 @@
             visibility: visible;
             opacity: 1;
         }
+        
+        /* Dark Mode Specific Styles */
+        .dark-mode {
+            background-color: #1a202c; /* Tailwind gray-900 */
+            color: #e2e8f0; /* Tailwind gray-200 */
+        }
+        .dark-mode .app-screen {
+            background-color: #1a202c;
+        }
+        .dark-mode .bg-white, .dark-mode .modal-overlay .bg-white {
+            background-color: #2d3748; /* Tailwind gray-800 */
+            color: #e2e8f0;
+        }
+        .dark-mode .text-gray-800 { color: #f7fafc; }
+        .dark-mode .text-gray-600 { color: #a0aec0; }
+        .dark-mode .text-gray-700 { color: #cbd5e0; }
+        .dark-mode input, .dark-mode select {
+            background-color: #4a5568; /* Tailwind gray-700 */
+            border-color: #4a5568;
+            color: #e2e8f0;
+        }
+        .dark-mode .border-gray-300 { border-color: #4a5568; }
+        .dark-mode .text-gray-500 { color: #a0aec0; }
+        .dark-mode .bg-gray-50 { background-color: #2d3748; }
+        .dark-mode .divide-gray-200 { border-color: #4a5568; }
+        .dark-mode .bg-gray-100 { background-color: #1a202c; }
+        .dark-mode .bg-gray-50 { background-color: #2d3748; }
+        .dark-mode .hover\:bg-gray-50:hover { background-color: #4a5568; }
+        .dark-mode .bg-red-100 { background-color: #4c1111; }
+        .dark-mode .text-gray-900 { color: #f7fafc; }
     </style>
 </head>
 <body class="bg-gray-100 font-sans antialiased">
@@ -92,6 +122,11 @@
     <div id="app-container" class="min-h-screen">
         <!-- Initial Input Screen -->
         <div id="initial-screen" class="app-screen min-h-screen flex items-center justify-center p-4">
+             <div class="absolute top-4 right-4 z-50">
+                 <button id="initial-screen-dark-mode-toggle" class="bg-gray-200 dark:bg-gray-700 p-2 rounded-full shadow-md transition-colors duration-200 ease-in-out">
+                    <i class="fas fa-moon text-gray-800 dark:text-yellow-400"></i>
+                </button>
+            </div>
             <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-xl">
                 <h1 class="text-3xl font-bold text-center mb-4 text-gray-800">Your Financial Snapshot</h1>
                 <p class="text-center text-gray-600 mb-8">Enter your current financial details to get started. Assumptions will use default values which you can edit later.</p>
@@ -163,6 +198,15 @@
                                     <i class="fas fa-sync-alt"></i>
                                 </button>
                                 <span class="button-tooltip-text">Restart Session</span>
+                            </div>
+                            <!-- Dark Mode Toggle Button -->
+                            <div class="relative button-tooltip-container">
+                                <button id="dashboard-dark-mode-toggle"
+                                    class="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-yellow-400 p-2 rounded-full shadow-md transition-colors duration-200 ease-in-out opacity-70 hover:opacity-100">
+                                    <i class="fas fa-sun light-icon"></i>
+                                    <i class="fas fa-moon dark-icon hidden"></i>
+                                </button>
+                                <span class="button-tooltip-text">Toggle Dark Mode</span>
                             </div>
                         </div>
                     </div>
@@ -285,15 +329,10 @@
                     <input type="text" id="event-name" name="name" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
                 </div>
                 <div>
-                    <label for="event-startAge" class="block text-sm font-medium text-gray-700">Starting Age</label>
+                    <label for="event-startAge" class="block text-sm font-medium text-gray-700">Age</label>
                     <input type="number" id="event-startAge" name="startAge" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
                 </div>
-                 <div>
-                    <label for="event-duration" class="block text-sm font-medium text-gray-700">Duration (Years)</label>
-                    <input type="number" id="event-duration" name="duration" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="e.g. 5 or -1 for until death">
-                </div>
-                 
-                <div class="p-4 bg-gray-50 rounded-lg">
+                 <div class="p-4 bg-gray-50 rounded-lg">
                     <h4 class="font-semibold text-gray-700 mb-2">Financial Change</h4>
                     <div>
                         <select id="event-change-type" name="changeType" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
@@ -301,6 +340,7 @@
                             <option value="income">Income</option>
                             <option value="expenses">Expenses</option>
                             <option value="taxRate">Tax Rate</option>
+                            <option value="oneTimeExpense">One-time Expense</option>
                         </select>
                     </div>
 
@@ -347,9 +387,17 @@
                                 <span class="text-sm font-medium text-gray-700">%</span>
                             </div>
                         </div>
+                        
+                        <div id="oneTimeExpense-change-fields" class="change-field hidden space-y-2">
+                            <label class="block text-sm font-medium text-gray-700">One-time Expense Amount ($)</label>
+                            <input type="number" id="oneTimeExpense-value" name="oneTimeExpense-value" placeholder="e.g. 25000" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                        </div>
                     </div>
                 </div>
-
+                <div>
+                    <label for="event-duration" class="block text-sm font-medium text-gray-700">Duration (Years)</label>
+                    <input type="number" id="event-duration" name="duration" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="e.g. 5 or -1 for until death">
+                </div>
                 <div class="flex justify-end pt-4">
                     <button type="submit" id="life-event-submit-btn" class="bg-indigo-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-indigo-700 transition">
                         Add Event
@@ -390,6 +438,10 @@
                 <div>
                     <label for="retirementExpenses" class="block text-sm font-medium text-gray-700">Annual Expenses in Retirement ($)</label>
                     <input type="number" id="retirementExpenses" name="retirementExpenses" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-150 ease-in-out">
+                </div>
+                <div>
+                    <label for="retirementIncome" class="block text-sm font-medium text-gray-700">Annual Income in Retirement ($)</label>
+                    <input type="number" id="retirementIncome" name="retirementIncome" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-150 ease-in-out">
                 </div>
                 <div>
                     <label for="lifeExpectancy" class="block text-sm font-medium text-gray-700">Life Expectancy</label>
@@ -493,6 +545,7 @@
             safeWithdrawalRate: 4,
             retirementAge: 65,
             retirementExpenses: 50000,
+            retirementIncome: 0,
             lifeExpectancy: 90
         };
 
@@ -503,6 +556,71 @@
             projection: [],
             fiAge: null,
             zeroAge: null
+        };
+        
+        // Dark Mode Logic
+        const darkModeState = {
+            enabled: false,
+            key: 'darkModeEnabled'
+        };
+
+        const applyDarkMode = (enabled) => {
+            if (enabled) {
+                document.body.classList.add('dark-mode');
+            } else {
+                document.body.classList.remove('dark-mode');
+            }
+            // Update chart colors
+            if (netWorthChart) updateChartColors();
+            // Update the icon
+            const lightIcon = document.querySelector('.light-icon');
+            const darkIcon = document.querySelector('.dark-icon');
+            if (lightIcon && darkIcon) {
+                if (enabled) {
+                    lightIcon.classList.add('hidden');
+                    darkIcon.classList.remove('hidden');
+                } else {
+                    lightIcon.classList.remove('hidden');
+                    darkIcon.classList.add('hidden');
+                }
+            }
+        };
+
+        const toggleDarkMode = () => {
+            darkModeState.enabled = !darkModeState.enabled;
+            localStorage.setItem(darkModeState.key, darkModeState.enabled);
+            applyDarkMode(darkModeState.enabled);
+        };
+        
+        const loadDarkMode = () => {
+            const savedState = localStorage.getItem(darkModeState.key);
+            darkModeState.enabled = savedState === 'true';
+            applyDarkMode(darkModeState.enabled);
+        };
+        
+        const updateChartColors = () => {
+            if (netWorthChart) {
+                const darkColor = '#667eea'; // Tailwind indigo-400
+                const lightColor = '#4299E1'; // Tailwind blue-500
+                const gridColor = '#4a5568';
+                const textColor = '#cbd5e0';
+                
+                netWorthChart.data.datasets[0].borderColor = darkModeState.enabled ? darkColor : lightColor;
+                netWorthChart.data.datasets[0].backgroundColor = darkModeState.enabled ? 'rgba(102, 126, 234, 0.2)' : 'rgba(66, 153, 225, 0.2)';
+                netWorthChart.options.scales.y.grid.color = darkModeState.enabled ? gridColor : '#E2E8F0';
+                netWorthChart.options.scales.x.grid.color = darkModeState.enabled ? gridColor : '#E2E8F0';
+                netWorthChart.options.scales.y.ticks.color = darkModeState.enabled ? textColor : '#6B7280';
+                netWorthChart.options.scales.x.ticks.color = darkModeState.enabled ? textColor : '#6B7280';
+                netWorthChart.update();
+            }
+
+            if (yearlyFinancialsChart) {
+                yearlyFinancialsChart.options.scales.y.grid.color = darkModeState.enabled ? '#4a5568' : '#E2E8F0';
+                yearlyFinancialsChart.options.scales.x.grid.color = darkModeState.enabled ? '#4a5568' : '#E2E8F0';
+                yearlyFinancialsChart.options.scales.y.ticks.color = darkModeState.enabled ? '#cbd5e0' : '#6B7280';
+                yearlyFinancialsChart.options.scales.x.ticks.color = darkModeState.enabled ? '#cbd5e0' : '#6B7280';
+                yearlyFinancialsChart.update();
+            }
         };
 
         // --- UTILITY FUNCTIONS ---
@@ -531,6 +649,8 @@
                 if (savedState) {
                     const parsedState = JSON.parse(savedState);
                     Object.assign(state, parsedState);
+                    // Handle new properties if old state is loaded
+                    state.initialData.retirementIncome = parsedState.initialData.retirementIncome || DEFAULTS.retirementIncome;
                 }
             } catch (error) {
                 console.error("Failed to load state from localStorage:", error);
@@ -564,10 +684,9 @@
         // --- PROJECTION LOGIC ---
         const calculateProjection = () => {
             const projection = [];
-            let { netWorth, income, expenses, customTaxRate, taxFilingStatus, currentAge, annualIncomeIncrease, investmentReturnRate, inflationRate, safeWithdrawalRate, retirementAge, retirementExpenses, lifeExpectancy } = state.initialData;
-
-            let effectiveIncome = income;
-            let effectiveExpenses = expenses;
+            let { netWorth, income, expenses, customTaxRate, taxFilingStatus, currentAge, annualIncomeIncrease, investmentReturnRate, inflationRate, safeWithdrawalRate, retirementAge, retirementExpenses, retirementIncome, lifeExpectancy } = state.initialData;
+            
+            let effectiveNetWorth = netWorth;
             let fiAge = null;
             let zeroAge = null;
 
@@ -577,76 +696,80 @@
             const swrDecimal = safeWithdrawalRate / 100;
             
             const fiNumber = (retirementExpenses * 12) / swrDecimal;
+            
+            // Map life events by age for quick lookup
+            const eventsByAge = state.lifeEvents.reduce((acc, event) => {
+                if (!acc[event.startAge]) acc[event.startAge] = [];
+                acc[event.startAge].push(event);
+                return acc;
+            }, {});
 
             for (let age = currentAge; age <= lifeExpectancy; age++) {
                 const year = new Date().getFullYear() - currentAge + age;
 
-                // FIX: Only apply increases after the first year
-                if (age > currentAge) {
-                    effectiveIncome *= (1 + incomeIncreaseRate);
-                    effectiveExpenses *= (1 + inflationRateDec);
+                // Step 1: Calculate the base income and expenses for the current year
+                let baseIncome;
+                if (age < retirementAge) {
+                    baseIncome = income * Math.pow(1 + incomeIncreaseRate, age - currentAge);
+                } else {
+                    baseIncome = retirementIncome * Math.pow(1 + inflationRateDec, age - retirementAge);
                 }
 
-                let currentTaxRate = taxFilingStatus === 'custom' ? customTaxRate / 100 : calculateTax(effectiveIncome, taxFilingStatus) / effectiveIncome;
+                const baseExpenses = expenses * Math.pow(1 + inflationRateDec, age - currentAge);
+                
+                // Step 2: Apply life event changes to the base values for this year
+                let effectiveIncome = baseIncome;
+                let effectiveExpenses = baseExpenses;
+                let effectiveTaxRate = taxFilingStatus === 'custom' ? customTaxRate / 100 : calculateTax(baseIncome, taxFilingStatus) / baseIncome;
+                let oneTimeExpense = 0;
 
-                state.lifeEvents.forEach(event => {
-                    // Check if the event's duration is defined, otherwise assume it lasts until life expectancy.
-                    const eventDuration = event.duration !== null ? event.duration : (lifeExpectancy - event.startAge);
-                    
+                const eventsForThisYear = eventsByAge[age] || [];
+
+                eventsForThisYear.forEach(event => {
+                    const eventDuration = (event.duration === null || event.duration === -1) ? (lifeExpectancy - event.startAge) : event.duration;
                     if (age >= event.startAge && age < event.startAge + eventDuration) {
                         if (event.changeType === 'income') {
                             if (event.operation === 'set') {
-                                if (event.valueType === 'percent') {
-                                    effectiveIncome = state.initialData.income * (event.value / 100);
-                                } else {
-                                    effectiveIncome = event.value;
-                                }
-                            } else {
-                                if (event.valueType === 'percent') {
-                                    effectiveIncome += state.initialData.income * (event.value / 100);
-                                } else {
-                                    effectiveIncome += event.value;
-                                }
+                                effectiveIncome = (event.valueType === 'percent') ? baseIncome * (event.value / 100) : event.value;
+                            } else { // 'change'
+                                effectiveIncome += (event.valueType === 'percent') ? baseIncome * (event.value / 100) : event.value;
                             }
                         } else if (event.changeType === 'expenses') {
-                            const taxesForThisYear = calculateTax(effectiveIncome, taxFilingStatus);
-                            const netIncomeForThisYear = effectiveIncome - taxesForThisYear;
                             if (event.operation === 'set') {
-                                if (event.valueType === 'percent') {
-                                    effectiveExpenses = netIncomeForThisYear * (event.value / 100);
-                                } else {
-                                    effectiveExpenses = event.value;
-                                }
-                            } else {
-                                if (event.valueType === 'percent') {
-                                    effectiveExpenses += netIncomeForThisYear * (event.value / 100);
-                                } else {
-                                    effectiveExpenses += event.value;
-                                }
+                                effectiveExpenses = (event.valueType === 'percent') ? (effectiveIncome - calculateTax(effectiveIncome, taxFilingStatus)) * (event.value / 100) : event.value;
+                            } else { // 'change'
+                                effectiveExpenses += (event.valueType === 'percent') ? (effectiveIncome - calculateTax(effectiveIncome, taxFilingStatus)) * (event.value / 100) : event.value;
                             }
                         } else if (event.changeType === 'taxRate') {
                             if (event.operation === 'set') {
-                                currentTaxRate = event.value / 100;
+                                effectiveTaxRate = event.value / 100;
                             } else {
-                                currentTaxRate += event.value / 100;
+                                effectiveTaxRate += event.value / 100;
                             }
+                        } else if (event.changeType === 'oneTimeExpense') {
+                            oneTimeExpense += event.value;
                         }
                     }
                 });
 
-                const taxesPaid = calculateTax(effectiveIncome, taxFilingStatus);
+                // Step 3: Recalculate taxes based on the potentially modified income
+                const taxesPaid = (taxFilingStatus === 'custom') ? effectiveIncome * effectiveTaxRate : calculateTax(effectiveIncome, taxFilingStatus);
+                
+                // Step 4: Perform yearly financial calculations
                 const netIncome = effectiveIncome - taxesPaid;
                 const savings = netIncome - effectiveExpenses;
-                const investmentGains = netWorth * investmentRate;
-                netWorth = netWorth + savings + investmentGains;
+                const investmentGains = effectiveNetWorth * investmentRate;
+                
+                // Update net worth, including the one-time expense
+                effectiveNetWorth = effectiveNetWorth + savings + investmentGains - oneTimeExpense;
 
                 // Check for Financial Independence
-                if (fiAge === null && netWorth >= fiNumber && age < retirementAge) {
+                if (fiAge === null && effectiveNetWorth >= fiNumber && age < retirementAge) {
                     fiAge = age;
                 }
 
                 // Check for Net Worth hitting $0
-                if (zeroAge === null && age >= retirementAge && netWorth <= 0) {
+                if (zeroAge === null && age >= retirementAge && effectiveNetWorth <= 0) {
                     zeroAge = age;
                 }
 
@@ -656,9 +779,10 @@
                     income: effectiveIncome,
                     expenses: effectiveExpenses,
                     taxes: taxesPaid,
-                    taxRate: currentTaxRate,
+                    taxRate: effectiveTaxRate,
                     savings,
-                    netWorth
+                    oneTimeExpense,
+                    netWorth: effectiveNetWorth
                 });
             }
 
@@ -788,6 +912,7 @@
                 renderLifeEvents();
                 renderProjectionTable();
                 renderCharts();
+                updateChartColors();
             }
         };
 
@@ -800,12 +925,19 @@
                 const changeText = getChangeDescription(event);
 
                 const durationText = (event.duration === null || event.duration === -1) ? 'Lasts until death' : `${event.duration} years`;
+                
+                let timeFrameText = '';
+                if(event.changeType === 'oneTimeExpense') {
+                    timeFrameText = `Happens at age ${event.startAge}`;
+                } else {
+                    timeFrameText = `Starts at age ${event.startAge}, lasts ${durationText}.`;
+                }
 
                 li.innerHTML = `
                     <div class="flex-1">
                         <h4 class="font-semibold text-gray-800">${event.name}</h4>
                         <p class="text-sm text-gray-600">
-                            Starts at age ${event.startAge}, lasts ${durationText}.
+                            ${timeFrameText}
                             <br>
                             ${changeText}
                         </p>
@@ -820,6 +952,9 @@
         };
 
         const getChangeDescription = (event) => {
+            if (event.changeType === 'oneTimeExpense') {
+                return `Deducts a one-time expense of ${formatCurrency(event.value)}.`;
+            }
             const opText = event.operation === 'set' ? 'set to' : 'change by';
             const valueText = event.valueType === 'percent' ? `${event.value}%` : formatCurrency(event.value);
             let targetText = '';
@@ -922,6 +1057,9 @@
             if (netWorthChart) netWorthChart.destroy();
             if (yearlyFinancialsChart) yearlyFinancialsChart.destroy();
 
+            const chartFontColor = darkModeState.enabled ? '#cbd5e0' : '#6B7280';
+            const gridColor = darkModeState.enabled ? '#4a5568' : '#E2E8F0';
+
             netWorthChart = new Chart(netWorthCtx, {
                 type: 'line',
                 data: {
@@ -929,8 +1067,8 @@
                     datasets: [{
                         label: 'Projected Net Worth',
                         data: netWorthData,
-                        borderColor: '#4299E1',
-                        backgroundColor: 'rgba(66, 153, 225, 0.2)',
+                        borderColor: darkModeState.enabled ? '#667eea' : '#4299E1',
+                        backgroundColor: darkModeState.enabled ? 'rgba(102, 126, 234, 0.2)' : 'rgba(66, 153, 225, 0.2)',
                         fill: true,
                         tension: 0.1
                     }]
@@ -938,7 +1076,17 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    scales: { y: { beginAtZero: true, grid: { color: '#E2E8F0' } }, x: { grid: { color: '#E2E8F0' } } }
+                    scales: { 
+                        y: { 
+                            beginAtZero: true, 
+                            grid: { color: gridColor },
+                            ticks: { color: chartFontColor }
+                        }, 
+                        x: { 
+                            grid: { color: gridColor },
+                            ticks: { color: chartFontColor }
+                        } 
+                    }
                 }
             });
 
@@ -964,8 +1112,17 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     scales: {
-                        x: { stacked: true, grid: { color: '#E2E8F0' } },
-                        y: { stacked: true, beginAtZero: true, grid: { color: '#E2E8F0' } }
+                        x: { 
+                            stacked: true, 
+                            grid: { color: gridColor },
+                            ticks: { color: chartFontColor }
+                        },
+                        y: { 
+                            stacked: true, 
+                            beginAtZero: true, 
+                            grid: { color: gridColor },
+                            ticks: { color: chartFontColor }
+                        }
                     }
                 }
             });
@@ -992,21 +1149,38 @@
             document.querySelectorAll('.change-field').forEach(field => field.classList.add('hidden'));
             document.getElementById('change-inputs-container').classList.add('hidden');
 
+            // Hide duration for one-time expenses
+            const durationField = document.querySelector('label[for="event-duration"]').parentNode;
+            durationField.classList.remove('hidden');
+
             if (eventIndex !== null) {
                 document.getElementById('event-name').value = eventData.name;
                 document.getElementById('event-startAge').value = eventData.startAge;
-                document.getElementById('event-duration').value = eventData.duration;
+                if (eventData.changeType !== 'oneTimeExpense') {
+                    document.getElementById('event-duration').value = eventData.duration;
+                    durationField.classList.remove('hidden');
+                } else {
+                    document.getElementById('event-duration').value = 1;
+                    durationField.classList.add('hidden');
+                }
+                
                 document.getElementById('event-change-type').value = eventData.changeType;
 
                 document.getElementById('change-inputs-container').classList.remove('hidden');
                 document.getElementById(`${eventData.changeType}-change-fields`).classList.remove('hidden');
-                document.getElementById(`${eventData.changeType}-op`).value = eventData.operation;
-                document.getElementById(`${eventData.changeType}-value`).value = eventData.value;
-                if (eventData.changeType !== 'taxRate') {
-                    document.getElementById(`${eventData.changeType}-type`).value = eventData.valueType;
+                
+                if (eventData.changeType === 'oneTimeExpense') {
+                    document.getElementById('oneTimeExpense-value').value = eventData.value;
+                } else {
+                    document.getElementById(`${eventData.changeType}-op`).value = eventData.operation;
+                    document.getElementById(`${eventData.changeType}-value`).value = eventData.value;
+                    if (eventData.changeType !== 'taxRate') {
+                        document.getElementById(`${eventData.changeType}-type`).value = eventData.valueType;
+                    }
                 }
             } else {
-                // Set default values for new events
+                 // Set default values for new events
+                document.getElementById('event-duration').value = '';
                 document.getElementById('income-op').value = 'set';
                 document.getElementById('income-type').value = 'amount';
                 document.getElementById('expenses-op').value = 'set';
@@ -1025,6 +1199,7 @@
             form.safeWithdrawalRate.value = state.initialData.safeWithdrawalRate;
             form.retirementAge.value = state.initialData.retirementAge;
             form.retirementExpenses.value = state.initialData.retirementExpenses;
+            form.retirementIncome.value = state.initialData.retirementIncome;
             form.lifeExpectancy.value = state.initialData.lifeExpectancy;
             openModal('assumptions-modal');
         };
@@ -1064,9 +1239,15 @@
 
         // --- EVENT LISTENERS & INITIALIZATION ---
         document.addEventListener('DOMContentLoaded', () => {
+            loadDarkMode();
             loadDataFromLocalStorage();
             renderInitialScreen();
             updateUI();
+            
+            // Dark Mode Toggles
+            document.getElementById('initial-screen-dark-mode-toggle').addEventListener('click', toggleDarkMode);
+            document.getElementById('dashboard-dark-mode-toggle').addEventListener('click', toggleDarkMode);
+
 
             // Handle tax filing status change on initial form
             document.getElementById('taxFilingStatus').addEventListener('change', () => {
@@ -1109,6 +1290,7 @@
                     safeWithdrawalRate: parseFloat(form.safeWithdrawalRate.value),
                     retirementAge: parseInt(form.retirementAge.value, 10),
                     retirementExpenses: parseFloat(form.retirementExpenses.value),
+                    retirementIncome: parseFloat(form.retirementIncome.value),
                     lifeExpectancy: parseInt(form.lifeExpectancy.value, 10)
                 };
                 createOrUpdateRetirementEvent();
@@ -1141,16 +1323,22 @@
                 const index = form.dataset.index;
                 const changeType = form.changeType.value;
                 
-                const newEvent = {
+                let newEvent = {
                     name: form.name.value,
                     startAge: parseInt(form.startAge.value, 10),
-                    duration: form.duration.value ? parseInt(form.duration.value, 10) : null,
                     changeType: changeType,
-                    operation: form.querySelector(`#${changeType}-op`).value,
-                    value: parseFloat(form.querySelector(`#${changeType}-value`).value),
-                    valueType: changeType !== 'taxRate' ? form.querySelector(`#${changeType}-type`).value : 'percent',
                     isDeletable: true
                 };
+
+                if (changeType === 'oneTimeExpense') {
+                    newEvent.duration = 1;
+                    newEvent.value = parseFloat(form.querySelector(`#oneTimeExpense-value`).value);
+                } else {
+                    newEvent.duration = form.duration.value ? parseInt(form.duration.value, 10) : null;
+                    newEvent.operation = form.querySelector(`#${changeType}-op`).value;
+                    newEvent.value = parseFloat(form.querySelector(`#${changeType}-value`).value);
+                    newEvent.valueType = changeType !== 'taxRate' ? form.querySelector(`#${changeType}-type`).value : 'percent';
+                }
                 
                 if (index) {
                     state.lifeEvents[index] = newEvent;
@@ -1179,7 +1367,7 @@
                 }
             });
 
-            // New: Handle click on event links in the table
+            // Handle click on event links in the table
             document.getElementById('projection-table-body').addEventListener('click', (e) => {
                 const target = e.target;
                 if (target.classList.contains('event-link')) {
@@ -1249,6 +1437,13 @@
             document.getElementById('event-change-type').addEventListener('change', (e) => {
                 const changeType = e.target.value;
                 document.querySelectorAll('.change-field').forEach(field => field.classList.add('hidden'));
+
+                const durationField = document.querySelector('label[for="event-duration"]').parentNode;
+                if (changeType === 'oneTimeExpense') {
+                    durationField.classList.add('hidden');
+                } else {
+                    durationField.classList.remove('hidden');
+                }
 
                 if (changeType) {
                     document.getElementById('change-inputs-container').classList.remove('hidden');

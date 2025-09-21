@@ -85,6 +85,36 @@
             visibility: visible;
             opacity: 1;
         }
+        
+        /* Dark Mode Specific Styles */
+        .dark-mode {
+            background-color: #1a202c; /* Tailwind gray-900 */
+            color: #e2e8f0; /* Tailwind gray-200 */
+        }
+        .dark-mode .app-screen {
+            background-color: #1a202c;
+        }
+        .dark-mode .bg-white, .dark-mode .modal-overlay .bg-white {
+            background-color: #2d3748; /* Tailwind gray-800 */
+            color: #e2e8f0;
+        }
+        .dark-mode .text-gray-800 { color: #f7fafc; }
+        .dark-mode .text-gray-600 { color: #a0aec0; }
+        .dark-mode .text-gray-700 { color: #cbd5e0; }
+        .dark-mode input, .dark-mode select {
+            background-color: #4a5568; /* Tailwind gray-700 */
+            border-color: #4a5568;
+            color: #e2e8f0;
+        }
+        .dark-mode .border-gray-300 { border-color: #4a5568; }
+        .dark-mode .text-gray-500 { color: #a0aec0; }
+        .dark-mode .bg-gray-50 { background-color: #2d3748; }
+        .dark-mode .divide-gray-200 { border-color: #4a5568; }
+        .dark-mode .bg-gray-100 { background-color: #1a202c; }
+        .dark-mode .bg-gray-50 { background-color: #2d3748; }
+        .dark-mode .hover\:bg-gray-50:hover { background-color: #4a5568; }
+        .dark-mode .bg-red-100 { background-color: #4c1111; }
+        .dark-mode .text-gray-900 { color: #f7fafc; }
     </style>
 </head>
 <body class="bg-gray-100 font-sans antialiased">
@@ -92,6 +122,11 @@
     <div id="app-container" class="min-h-screen">
         <!-- Initial Input Screen -->
         <div id="initial-screen" class="app-screen min-h-screen flex items-center justify-center p-4">
+             <div class="absolute top-4 right-4 z-50">
+                 <button id="initial-screen-dark-mode-toggle" class="bg-gray-200 dark:bg-gray-700 p-2 rounded-full shadow-md transition-colors duration-200 ease-in-out">
+                    <i class="fas fa-moon text-gray-800 dark:text-yellow-400"></i>
+                </button>
+            </div>
             <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-xl">
                 <h1 class="text-3xl font-bold text-center mb-4 text-gray-800">Your Financial Snapshot</h1>
                 <p class="text-center text-gray-600 mb-8">Enter your current financial details to get started. Assumptions will use default values which you can edit later.</p>
@@ -163,6 +198,15 @@
                                     <i class="fas fa-sync-alt"></i>
                                 </button>
                                 <span class="button-tooltip-text">Restart Session</span>
+                            </div>
+                            <!-- Dark Mode Toggle Button -->
+                            <div class="relative button-tooltip-container">
+                                <button id="dashboard-dark-mode-toggle"
+                                    class="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-yellow-400 p-2 rounded-full shadow-md transition-colors duration-200 ease-in-out opacity-70 hover:opacity-100">
+                                    <i class="fas fa-sun light-icon"></i>
+                                    <i class="fas fa-moon dark-icon hidden"></i>
+                                </button>
+                                <span class="button-tooltip-text">Toggle Dark Mode</span>
                             </div>
                         </div>
                     </div>
@@ -513,6 +557,71 @@
             fiAge: null,
             zeroAge: null
         };
+        
+        // Dark Mode Logic
+        const darkModeState = {
+            enabled: false,
+            key: 'darkModeEnabled'
+        };
+
+        const applyDarkMode = (enabled) => {
+            if (enabled) {
+                document.body.classList.add('dark-mode');
+            } else {
+                document.body.classList.remove('dark-mode');
+            }
+            // Update chart colors
+            if (netWorthChart) updateChartColors();
+            // Update the icon
+            const lightIcon = document.querySelector('.light-icon');
+            const darkIcon = document.querySelector('.dark-icon');
+            if (lightIcon && darkIcon) {
+                if (enabled) {
+                    lightIcon.classList.add('hidden');
+                    darkIcon.classList.remove('hidden');
+                } else {
+                    lightIcon.classList.remove('hidden');
+                    darkIcon.classList.add('hidden');
+                }
+            }
+        };
+
+        const toggleDarkMode = () => {
+            darkModeState.enabled = !darkModeState.enabled;
+            localStorage.setItem(darkModeState.key, darkModeState.enabled);
+            applyDarkMode(darkModeState.enabled);
+        };
+        
+        const loadDarkMode = () => {
+            const savedState = localStorage.getItem(darkModeState.key);
+            darkModeState.enabled = savedState === 'true';
+            applyDarkMode(darkModeState.enabled);
+        };
+        
+        const updateChartColors = () => {
+            if (netWorthChart) {
+                const darkColor = '#667eea'; // Tailwind indigo-400
+                const lightColor = '#4299E1'; // Tailwind blue-500
+                const gridColor = '#4a5568';
+                const textColor = '#cbd5e0';
+                
+                netWorthChart.data.datasets[0].borderColor = darkModeState.enabled ? darkColor : lightColor;
+                netWorthChart.data.datasets[0].backgroundColor = darkModeState.enabled ? 'rgba(102, 126, 234, 0.2)' : 'rgba(66, 153, 225, 0.2)';
+                netWorthChart.options.scales.y.grid.color = darkModeState.enabled ? gridColor : '#E2E8F0';
+                netWorthChart.options.scales.x.grid.color = darkModeState.enabled ? gridColor : '#E2E8F0';
+                netWorthChart.options.scales.y.ticks.color = darkModeState.enabled ? textColor : '#6B7280';
+                netWorthChart.options.scales.x.ticks.color = darkModeState.enabled ? textColor : '#6B7280';
+                netWorthChart.update();
+            }
+
+            if (yearlyFinancialsChart) {
+                yearlyFinancialsChart.options.scales.y.grid.color = darkModeState.enabled ? '#4a5568' : '#E2E8F0';
+                yearlyFinancialsChart.options.scales.x.grid.color = darkModeState.enabled ? '#4a5568' : '#E2E8F0';
+                yearlyFinancialsChart.options.scales.y.ticks.color = darkModeState.enabled ? '#cbd5e0' : '#6B7280';
+                yearlyFinancialsChart.options.scales.x.ticks.color = darkModeState.enabled ? '#cbd5e0' : '#6B7280';
+                yearlyFinancialsChart.update();
+            }
+        };
 
         // --- UTILITY FUNCTIONS ---
         function formatCurrency(amount) {
@@ -803,6 +912,7 @@
                 renderLifeEvents();
                 renderProjectionTable();
                 renderCharts();
+                updateChartColors();
             }
         };
 
@@ -947,6 +1057,9 @@
             if (netWorthChart) netWorthChart.destroy();
             if (yearlyFinancialsChart) yearlyFinancialsChart.destroy();
 
+            const chartFontColor = darkModeState.enabled ? '#cbd5e0' : '#6B7280';
+            const gridColor = darkModeState.enabled ? '#4a5568' : '#E2E8F0';
+
             netWorthChart = new Chart(netWorthCtx, {
                 type: 'line',
                 data: {
@@ -954,8 +1067,8 @@
                     datasets: [{
                         label: 'Projected Net Worth',
                         data: netWorthData,
-                        borderColor: '#4299E1',
-                        backgroundColor: 'rgba(66, 153, 225, 0.2)',
+                        borderColor: darkModeState.enabled ? '#667eea' : '#4299E1',
+                        backgroundColor: darkModeState.enabled ? 'rgba(102, 126, 234, 0.2)' : 'rgba(66, 153, 225, 0.2)',
                         fill: true,
                         tension: 0.1
                     }]
@@ -963,7 +1076,17 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    scales: { y: { beginAtZero: true, grid: { color: '#E2E8F0' } }, x: { grid: { color: '#E2E8F0' } } }
+                    scales: { 
+                        y: { 
+                            beginAtZero: true, 
+                            grid: { color: gridColor },
+                            ticks: { color: chartFontColor }
+                        }, 
+                        x: { 
+                            grid: { color: gridColor },
+                            ticks: { color: chartFontColor }
+                        } 
+                    }
                 }
             });
 
@@ -989,8 +1112,17 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     scales: {
-                        x: { stacked: true, grid: { color: '#E2E8F0' } },
-                        y: { stacked: true, beginAtZero: true, grid: { color: '#E2E8F0' } }
+                        x: { 
+                            stacked: true, 
+                            grid: { color: gridColor },
+                            ticks: { color: chartFontColor }
+                        },
+                        y: { 
+                            stacked: true, 
+                            beginAtZero: true, 
+                            grid: { color: gridColor },
+                            ticks: { color: chartFontColor }
+                        }
                     }
                 }
             });
@@ -1107,9 +1239,15 @@
 
         // --- EVENT LISTENERS & INITIALIZATION ---
         document.addEventListener('DOMContentLoaded', () => {
+            loadDarkMode();
             loadDataFromLocalStorage();
             renderInitialScreen();
             updateUI();
+            
+            // Dark Mode Toggles
+            document.getElementById('initial-screen-dark-mode-toggle').addEventListener('click', toggleDarkMode);
+            document.getElementById('dashboard-dark-mode-toggle').addEventListener('click', toggleDarkMode);
+
 
             // Handle tax filing status change on initial form
             document.getElementById('taxFilingStatus').addEventListener('change', () => {
