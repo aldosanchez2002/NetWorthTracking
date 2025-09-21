@@ -380,13 +380,13 @@
                         <div class="flex justify-between items-center mb-4">
                             <h2 class="text-2xl font-bold text-gray-800">Life Events</h2>
                             <button id="add-life-event-btn"
-                                class="bg-indigo-500 text-white px-4 py-2 rounded-lg shadow-sm hover:bg-indigo-600 transition">
-                                Add Event
+                                class="bg-indigo-600 text-white px-4 py-2 rounded-lg shadow-sm hover:bg-indigo-700 hover:scale-105 transition-transform duration-200">
+                                Add a Life Event
                             </button>
                         </div>
-                        <ul id="life-events-list" class="space-y-4">
-                            <!-- Life events will be rendered here -->
-                        </ul>
+                        <div id="life-events-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                            <!-- Life events will be rendered here as cards -->
+                        </div>
                     </div>
 
                     <!-- Projection Table Section -->
@@ -1129,8 +1129,8 @@
             const list = document.getElementById('life-events-list');
             list.innerHTML = '';
             state.lifeEvents.forEach((event, index) => {
-                const li = document.createElement('li');
-                li.className = 'flex items-center justify-between p-4 my-2 bg-white rounded-lg shadow';
+                const li = document.createElement('div');
+                li.className = 'flex items-center justify-between p-4 my-2 bg-gray-100 dark:bg-gray-100 rounded-lg shadow';
                 const changeText = getChangeDescription(event);
 
                 const durationText = (event.duration === null || event.duration === -1) ? 'Lasts until death' : `${event.duration} years`;
