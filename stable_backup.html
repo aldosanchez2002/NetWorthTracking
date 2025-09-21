@@ -196,7 +196,8 @@
             <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-xl">
                 <h1 class="text-3xl font-bold text-center mb-4 text-gray-800">Your Financial Snapshot</h1>
                 <p class="text-center text-gray-600 mb-1">Welcome! Let's get started.</p>
-                <p class="text-center text-gray-600 mb-8"> Please provide your current financial details below. Your information is completely private and will
+                <p class="text-center text-gray-600 mb-8"> Please provide your current financial details below. Your
+                    information is completely private and will
                     not be collected or stored. You can always edit these values later.</p>
                 <form id="initial-form" class="space-y-6">
                     <div>
@@ -295,37 +296,68 @@
                         <div class="bg-white rounded-2xl p-6 shadow-md flex flex-col justify-between">
                             <div class="flex justify-between items-center mb-2">
                                 <h3 class="text-xl font-semibold text-gray-600">Current Net Worth</h3>
-                                <button id="edit-current-net-worth-btn"
-                                    class="text-sm text-gray-500 hover:text-gray-700">
-                                    <i class="fas fa-pencil-alt"></i>
-                                </button>
+                                <div class="flex space-x-3">
+                                    <button id="edit-current-net-worth-btn"
+                                        class="text-sm text-gray-500 hover:text-gray-700">
+                                        <i class="fas fa-pencil-alt fa-xl"></i>
+                                    </button>
+                                    <button class="info-btn" data-info="current-net-worth" title="What is this?"
+                                        class="text-sm text-gray-400 hover:text-indigo-500">
+                                        <i class="fas fa-question-circle"></i>
+                                        <span class="tooltip-text">How is this calculated?</span>
+                                    </button>
+                                </div>
                             </div>
                             <div class="flex items-center">
-                                <span id="current-net-worth" class="text-3xl font-bold text-gray-900 mr-2"></span>
+                                <span id="current-net-worth" class="text-4xl font-bold text-gray-900 mr-2"></span>
                             </div>
                         </div>
                         <div class="bg-white rounded-2xl p-6 shadow-md flex flex-col justify-between">
                             <div class="flex justify-between items-center mb-2">
                                 <h3 class="text-xl font-semibold text-gray-600">Projected Net Worth at Retirement</h3>
-                                <button id="edit-retirement-assumptions-btn"
-                                    class="text-sm text-gray-500 hover:text-gray-700">
-                                    <i class="fas fa-pencil-alt"></i>
-                                </button>
+                                <div class="flex space-x-3">
+                                    <button id="edit-retirement-assumptions-btn"
+                                        class="text-sm text-gray-500 hover:text-gray-700">
+                                        <i class="fas fa-pencil-alt fa-xl"></i>
+                                    </button>
+                                    <button class="info-btn" data-info="projected-net-worth" title="What is this?"
+                                        class="text-sm text-gray-400 hover:text-indigo-500">
+                                        <i class="fas fa-question-circle"></i>
+                                        <span class="tooltip-text">How is this calculated?</span>
+                                    </button>
+                                </div>
                             </div>
                             <p id="projected-net-worth" class="text-4xl font-bold text-indigo-600 mt-2"></p>
                             <p id="retirement-message" class="text-sm mt-2 font-medium"></p>
                         </div>
                         <div class="bg-white rounded-2xl p-6 shadow-md flex flex-col justify-between">
-                            <h3 class="text-xl font-semibold text-gray-600">Yearly Savings Target</h3>
+                            <div class="flex justify-between items-center mb-2">
+                                <h3 class="text-xl font-semibold text-gray-600">Yearly Savings Target</h3>
+                                <div class="flex space-x-3">
+                                    <button class="info-btn" data-info="savings-target" title="What is this?"
+                                        class="text-sm text-gray-400 hover:text-indigo-500">
+                                        <i class="fas fa-question-circle"></i>
+                                        <span class="tooltip-text">How is this calculated?</span>
+                                    </button>
+                                </div>
+                            </div>
                             <p id="savings-target" class="text-4xl font-bold text-emerald-600 mt-2"></p>
                         </div>
                         <!-- New Net Worth Required to Retire Card -->
                         <div class="bg-white rounded-2xl p-6 shadow-md flex flex-col justify-between">
                             <div class="flex justify-between items-center mb-2">
                                 <h3 class="text-xl font-semibold text-gray-600">Net Worth Required to Retire</h3>
-                                <button id="edit-fi-assumptions-btn" class="text-sm text-gray-500 hover:text-gray-700">
-                                    <i class="fas fa-pencil-alt"></i>
-                                </button>
+                                <div class="flex space-x-3">
+                                    <button id="edit-fi-assumptions-btn"
+                                        class="text-sm text-gray-500 hover:text-gray-700">
+                                        <i class="fas fa-pencil-alt fa-xl"></i>
+                                    </button>
+                                    <button class="info-btn" data-info="fi-number" title="What is this?"
+                                        class="text-sm text-gray-400 hover:text-indigo-500">
+                                        <i class="fas fa-question-circle"></i>
+                                        <span class="tooltip-text">How is this calculated?</span>
+                                    </button>
+                                </div>
                             </div>
                             <p id="fi-number-display" class="text-4xl font-bold text-gray-900 mt-2"></p>
                             <p class="text-sm mt-2 text-gray-500">Based on your annual expenses and safe withdrawal
@@ -334,10 +366,17 @@
                         <div class="bg-white rounded-2xl p-6 shadow-md flex flex-col justify-between">
                             <div class="flex justify-between items-center mb-2">
                                 <h3 class="text-xl font-semibold text-gray-600">Age of Financial Independence</h3>
-                                <button id="edit-fi-age-assumptions-btn"
-                                    class="text-sm text-gray-500 hover:text-gray-700">
-                                    <i class="fas fa-pencil-alt"></i>
-                                </button>
+                                <div class="flex space-x-3">
+                                    <button id="edit-fi-age-assumptions-btn"
+                                        class="text-sm text-gray-500 hover:text-gray-700">
+                                        <i class="fas fa-pencil-alt fa-xl"></i>
+                                    </button>
+                                    <button class="info-btn" data-info="fi-age" title="What is this?"
+                                        class="text-sm text-gray-400 hover:text-indigo-500">
+                                        <i class="fas fa-question-circle"></i>
+                                        <span class="tooltip-text">How is this calculated?</span>
+                                    </button>
+                                </div>
                             </div>
                             <p id="fi-age" class="text-4xl font-bold text-teal-600 mt-2"></p>
                             <p id="fi-message" class="text-sm text-gray-500"></p>
@@ -346,10 +385,17 @@
                             class="bg-white rounded-2xl p-6 shadow-md flex flex-col justify-between">
                             <div class="flex justify-between items-center mb-2">
                                 <h3 class="text-xl font-semibold text-gray-600">Net Worth Hits $0</h3>
-                                <button id="edit-lifespan-assumptions-btn"
-                                    class="text-sm text-gray-500 hover:text-gray-700">
-                                    <i class="fas fa-pencil-alt"></i>
-                                </button>
+                                <div class="flex space-x-3">
+                                    <button id="edit-lifespan-assumptions-btn"
+                                        class="text-sm text-gray-500 hover:text-gray-700">
+                                        <i class="fas fa-pencil-alt fa-xl"></i>
+                                    </button>
+                                    <button class="info-btn" data-info="zero-age" title="What is this?"
+                                        class="text-sm text-gray-400 hover:text-indigo-500">
+                                        <i class="fas fa-question-circle"></i>
+                                        <span class="tooltip-text">How is this calculated?</span>
+                                    </button>
+                                </div>
                             </div>
                             <p id="zero-age" class="text-4xl font-bold text-rose-600 mt-2"></p>
                             <p class="text-sm text-gray-500" id="zero-age-message"></p>
@@ -390,7 +436,8 @@
                                 Add a Life Event
                             </button>
                         </div>
-                        <p class="text-gray-600 mb-2 text-base">What's next for you? From a new job to a paying tuition, add life events to visualize their impact on your finances.</p>
+                        <p class="text-gray-600 mb-2 text-base">What's next for you? From a new job to a paying tuition,
+                            add life events to visualize their impact on your finances.</p>
                         <div id="life-events-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                             <!-- Life events will be rendered here as cards -->
                         </div>
@@ -448,7 +495,7 @@
         <div class="bg-white p-6 rounded-lg shadow-xl max-w-lg w-full">
             <div class="flex justify-between items-center mb-4">
                 <h3 id="life-event-title" class="text-2xl font-bold text-gray-800">Add New Life Event</h3>
-                <button class="close-modal-btn text-gray-400 hover:text-gray-600">&times;</button>
+                <button class="close-modal-btn text-gray-400 hover:text-gray-600 text-3xl px-3 py-1">&times;</button>
             </div>
             <form id="life-event-form" class="space-y-4">
                 <div>
@@ -552,7 +599,7 @@
         <div class="bg-white p-8 rounded-lg shadow-xl max-w-lg w-full">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-2xl font-bold text-gray-800">Edit Assumptions</h3>
-                <button class="close-modal-btn text-gray-400 hover:text-gray-600">&times;</button>
+                <button class="close-modal-btn text-gray-400 hover:text-gray-600 text-3xl px-3 py-1">&times;</button>
             </div>
             <form id="assumptions-form" class="space-y-6">
                 <div>
@@ -616,7 +663,7 @@
         <div class="bg-white p-8 rounded-lg shadow-xl max-w-lg w-full">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-2xl font-bold text-gray-800">Edit Retirement Assumptions</h3>
-                <button class="close-modal-btn text-gray-400 hover:text-gray-600">&times;</button>
+                <button class="close-modal-btn text-gray-400 hover:text-gray-600 text-3xl px-3 py-1">&times;</button>
             </div>
             <form id="retirement-assumptions-form" class="space-y-6">
                 <div>
@@ -663,7 +710,7 @@
         <div class="bg-white p-8 rounded-lg shadow-xl max-w-lg w-full">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-2xl font-bold text-gray-800">Edit Initial Data</h3>
-                <button class="close-modal-btn text-gray-400 hover:text-gray-600">&times;</button>
+                <button class="close-modal-btn text-gray-400 hover:text-gray-600 text-3xl px-3 py-1">&times;</button>
             </div>
             <form id="initial-data-form" class="space-y-6">
                 <div>
@@ -714,6 +761,17 @@
         </div>
     </div>
 
+    <!-- Info Modal -->
+    <div id="info-modal"
+        class="modal-overlay hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50">
+        <div class="bg-white p-6 rounded-lg shadow-xl max-w-md w-full">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="info-modal-title" class="text-xl font-bold text-gray-800">Info</h3>
+                <button class="close-modal-btn text-gray-400 hover:text-gray-600 text-3xl px-3 py-1">&times;</button>
+            </div>
+            <div id="info-modal-content" class="text-gray-700 text-base"></div>
+        </div>
+    </div>
 
     <!-- JavaScript -->
     <script>
@@ -1668,6 +1726,33 @@
 
             // Initial creation of the retirement event when the page loads
             createOrUpdateRetirementEvent();
+        });
+
+        const INFO_TEXTS = {
+            'current-net-worth': 'Your Current Net Worth is the total value of what you own minus what you owe. It is sourced from your initial financial data.',
+            'projected-net-worth': 'Your Projected Net Worth at Retirement is an estimate of your total wealth when you reach the target retirement age. This calculation considers your income, expenses, inflation, and investment growth over time.\n\nSee the Detailed Projection Table for year-by-year breakdowns.',
+            'savings-target': 'The Yearly Savings Target is the amount you should aim to save each year. It is the difference between your after-tax income and your expenses.\n\nFormula:\nIncome - Taxes - Expenses',
+            'fi-number': 'The Net Worth Required to Retire, also known as your "Financial Independence Number," is the investment amount you need to generate enough passive income to cover your yearly expenses.\n\nFormula:\nAnnual Retirement Expenses / Safe Withdrawal Rate',
+            'fi-age': 'Your Age of Financial Independence is the age when your investments are large enough to cover your expenses, allowing you to stop working. This is when your Net Worth is equal to your Net Worth Required to Retire.\n\nSee the Detailed Projection Table for year-by-year breakdowns.',
+            'zero-age': 'The Net Worth Hits $0 age is a projection of when your savings could run out, based on your retirement spending. This is a crucial number to monitor for long-term planning.\n\nSee the Detailed Projection Table for year-by-year breakdowns.',
+        };
+
+        function openInfoModal(type) {
+            document.getElementById('info-modal-title').innerText = 'Info';
+            document.getElementById('info-modal-content').innerText = INFO_TEXTS[type] || '';
+            document.getElementById('info-modal').classList.remove('hidden');
+        }
+
+        document.querySelectorAll('.info-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                const type = btn.getAttribute('data-info');
+                openInfoModal(type);
+            });
+        });
+        document.querySelectorAll('.close-modal-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                btn.closest('.modal-overlay').classList.add('hidden');
+            });
         });
     </script>
 </body>
