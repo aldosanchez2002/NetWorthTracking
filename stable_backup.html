@@ -987,8 +987,8 @@
 
             const fiNumber = retirementExpenses / swrDecimal;
 
-            // Map life events by age for quick lookup
-            const eventsByAge = state.lifeEvents.reduce((acc, event) => {
+            // Map life events by age for quick lookup, but ignore retirement event for calculations
+            const eventsByAge = state.lifeEvents.filter(e => e.id !== 'retirement').reduce((acc, event) => {
                 if (!acc[event.startAge]) acc[event.startAge] = [];
                 acc[event.startAge].push(event);
                 return acc;
@@ -999,13 +999,14 @@
 
                 // Step 1: Calculate the base income and expenses for the current year
                 let baseIncome;
+                let baseExpenses;
                 if (age < retirementAge) {
                     baseIncome = income * Math.pow(1 + incomeIncreaseRate, age - currentAge);
+                    baseExpenses = expenses * Math.pow(1 + inflationRateDec, age - currentAge);
                 } else {
                     baseIncome = retirementIncome * Math.pow(1 + inflationRateDec, age - retirementAge);
+                    baseExpenses = retirementExpenses * Math.pow(1 + inflationRateDec, age - retirementAge);
                 }
-
-                const baseExpenses = expenses * Math.pow(1 + inflationRateDec, age - currentAge);
 
                 // Step 2: Apply life event changes to the base values for this year
                 let effectiveIncome = baseIncome;
