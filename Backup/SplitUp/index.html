@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Financial Projection</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+        integrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0v4LLanw2qksYuRlEzO+tcaEPQogQ0KaoGN26/zrn20ImR1DfuLWnOo7aBA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ctext y='50%' x='50%' text-anchor='middle' dominant-baseline='central' font-size='48'%3E%F0%9F%92%B5%3C/text%3E%3C/svg%3E">
+</head>
+
+<body class="bg-gray-100 font-sans antialiased">
+    <div id="app-container" class="min-h-screen">
+        <div id="initial-screen" class="app-screen min-h-screen flex items-center justify-center p-4">
+            <div class="absolute top-4 right-4 z-50">
+                <button id="initial-screen-dark-mode-toggle"
+                    class="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-yellow-400 text-sm md:text-md px-3 py-2 rounded-full shadow focus:outline-none focus:ring-1 focus:ring-yellow-300 transition-colors duration-200 ease-in-out opacity-70 hover:opacity-100">
+                    <i class="fas fa-sun light-icon"></i>
+                    <i class="fas fa-moon dark-icon hidden"></i>
+                </button>
+            </div>
+            <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-xl">
+                <h1 class="text-3xl font-bold text-center mb-4 text-gray-800">Your Financial Snapshot</h1>
+                <p class="text-center text-gray-600 mb-1">Welcome! Let's get started.</p>
+                <p class="text-center text-gray-600 mb-8"> Please provide your current financial details below. Your
+                    information is completely private and will
+                    not be collected or stored. You can always edit these values later.</p>
+                <form id="initial-form" class="space-y-6">
+                    <div>
+                        <label for="currentAge" class="block text-sm font-medium text-gray-700">Current Age</label>
+                        <input type="number" id="currentAge" name="currentAge" required
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-150 ease-in-out">
+                    </div>
+                    <div>
+                        <label for="income" class="block text-sm font-medium text-gray-700">Current Annual Income ($
+                            Pre-tax)</label>
+                        <input type="number" id="income" name="income" required
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-150 ease-in-out">
+                    </div>
+                    <div>
+                        <label for="taxFilingStatus" class="block text-sm font-medium text-gray-700">Tax Filing
+                            Status</label>
+                        <select id="taxFilingStatus" name="taxFilingStatus"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-150 ease-in-out">
+                            <option value="single">Single</option>
+                            <option value="married">Married Filing Jointly</option>
+                            <option value="headOfHousehold">Head of Household</option>
+                            <option value="custom">Custom Rate (Deductions/Credits, W-4, W-9, etc.)</option>
+                        </select>
+                    </div>
+                    <div id="customTaxRateContainer" class="hidden">
+                        <label for="customTaxRate" class="block text-sm font-medium text-gray-700">Custom Annual Tax
+                            Rate (%)</label>
+                        <input type="number" id="customTaxRate" name="customTaxRate"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-150 ease-in-out">
+                    </div>
+                    <div>
+                        <label for="netWorth" class="block text-sm font-medium text-gray-700">Current Net Worth
+                            ($)</label>
+                        <input type="number" id="netWorth" name="netWorth" required
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-150 ease-in-out">
+                    </div>
+                    <div>
+                        <label for="expenses" class="block text-sm font-medium text-gray-700">Current Annual Expenses
+                            ($)</label>
+                        <input type="number" id="expenses" name="expenses" required
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-150 ease-in-out">
+                    </div>
+                    <button type="submit"
+                        class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-lg font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out">
+                        Start Projection
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div id="main-dashboard" class="app-screen hidden p-4 sm:p-8">
+            <div class="flex flex-col md:flex-row md:space-x-8">
+                <div class="flex-1 space-y-8">
+                    <div class="flex justify-between items-center mb-4">
+                        <h1 class="text-3xl font-bold text-gray-800">Financial Dashboard</h1>
+                        <div class="flex space-x-2">
+                            <script src='https://storage.ko-fi.com/cdn/scripts/overlay-widget.js'></script>
+                            <script>
+                                kofiWidgetOverlay.draw('personalfinancialprojection', {
+                                    'type': 'floating-chat',
+                                    'floating-chat.donateButton.text': 'Donate',
+                                    'floating-chat.donateButton.background-color': '#4C51BF',
+                                    'floating-chat.donateButton.text-color': '#fff'
+                                });
+                            </script>
+                            <div class="relative button-tooltip-container">
+                                <button id="edit-initial-data-btn"
+                                    class="text-sm md:text-md text-white bg-green-600 hover:bg-green-600 px-3 py-2 rounded-full shadow focus:outline-none focus:ring-1 focus:ring-green-400 transition duration-150 ease-in-out opacity-70 hover:opacity-100">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <span class="button-tooltip-text">Edit Initial Data</span>
+                            </div>
+                            <div class="relative button-tooltip-container">
+                                <button id="edit-assumptions-btn"
+                                    class="text-sm md:text-md text-white bg-blue-500 hover:bg-blue-600 px-3 py-2 rounded-full shadow focus:outline-none focus:ring-1 focus:ring-blue-400 transition duration-150 ease-in-out opacity-70 hover:opacity-100">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </button>
+                                <span class="button-tooltip-text">Edit Assumptions</span>
+                            </div>
+                            <div class="relative button-tooltip-container">
+                                <button id="restart-session-btn"
+                                    class="text-sm md:text-md text-white bg-red-500 hover:bg-red-600 px-3 py-2 rounded-full shadow focus:outline-none focus:ring-1 focus:ring-red-400 transition duration-150 ease-in-out opacity-70 hover:opacity-100">
+                                    <i class="fas fa-sync-alt"></i>
+                                </button>
+                                <span class="button-tooltip-text">Restart Session</span>
+                            </div>
+                            <div class="relative button-tooltip-container">
+                                <button id="dashboard-dark-mode-toggle"
+                                    class="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-yellow-400 text-sm md:text-md px-3 py-2 rounded-full shadow focus:outline-none focus:ring-1 focus:ring-yellow-300 transition-colors duration-200 ease-in-out opacity-70 hover:opacity-100">
+                                    <i class="fas fa-sun light-icon"></i>
+                                    <i class="fas fa-moon dark-icon hidden"></i>
+                                </button>
+                                <span class="button-tooltip-text">Toggle Dark Mode</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div class="bg-white rounded-2xl p-6 shadow-md flex flex-col justify-between">
+                            <div class="flex justify-between items-center mb-2">
+                                <h3 class="text-xl font-semibold text-gray-600">Current Net Worth</h3>
+                                <div class="flex space-x-3">
+                                    <button id="edit-current-net-worth-btn"
+                                        class="text-sm text-gray-500 hover:text-gray-700">
+                                        <i class="fas fa-pencil-alt fa-xl"></i>
+                                    </button>
+                                    <button class="info-btn" data-info="current-net-worth" title="What is this?"
+                                        class="text-sm text-gray-400 hover:text-indigo-500">
+                                        <i class="fas fa-question-circle"></i>
+                                        <span class="tooltip-text">How is this calculated?</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="flex items-center">
+                                <span id="current-net-worth" class="text-4xl font-bold text-gray-900 mr-2"></span>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-2xl p-6 shadow-md flex flex-col justify-between">
+                            <div class="flex justify-between items-center mb-2">
+                                <h3 class="text-xl font-semibold text-gray-600">Projected Net Worth at Retirement</h3>
+                                <div class="flex space-x-3">
+                                    <button id="edit-retirement-assumptions-btn"
+                                        class="text-sm text-gray-500 hover:text-gray-700">
+                                        <i class="fas fa-pencil-alt fa-xl"></i>
+                                    </button>
+                                    <button class="info-btn" data-info="projected-net-worth" title="What is this?"
+                                        class="text-sm text-gray-400 hover:text-indigo-500">
+                                        <i class="fas fa-question-circle"></i>
+                                        <span class="tooltip-text">How is this calculated?</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <p id="projected-net-worth" class="text-4xl font-bold text-indigo-600 mt-2"></p>
+                            <p id="retirement-message" class="text-sm mt-2 font-medium"></p>
+                        </div>
+                        <div class="bg-white rounded-2xl p-6 shadow-md flex flex-col justify-between">
+                            <div class="flex justify-between items-center mb-2">
+                                <h3 class="text-xl font-semibold text-gray-600">This Year's Savings Target</h3>
+                                <div class="flex space-x-3">
+                                    <button class="info-btn" data-info="savings-target" title="What is this?"
+                                        class="text-sm text-gray-400 hover:text-indigo-500">
+                                        <i class="fas fa-question-circle"></i>
+                                        <span class="tooltip-text">How is this calculated?</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <p id="savings-target" class="text-4xl font-bold text-green-600 mt-2"></p>
+                        </div>
+                        <div class="bg-white rounded-2xl p-6 shadow-md flex flex-col justify-between">
+                            <div class="flex justify-between items-center mb-2">
+                                <h3 class="text-xl font-semibold text-gray-600">Net Worth Required to Retire</h3>
+                                <div class="flex space-x-3">
+                                    <button id="edit-fi-assumptions-btn"
+                                        class="text-sm text-gray-500 hover:text-gray-700">
+                                        <i class="fas fa-pencil-alt fa-xl"></i>
+                                    </button>
+                                    <button class="info-btn" data-info="fi-number" title="What is this?"
+                                        class="text-sm text-gray-400 hover:text-indigo-500">
+                                        <i class="fas fa-question-circle"></i>
+                                        <span class="tooltip-text">How is this calculated?</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <p id="fi-number-display" class="text-4xl font-bold text-green-600 mt-2"></p>
+                            <p class="text-sm mt-2 text-gray-500">Based on your annual expenses and safe withdrawal
+                                rate.</p>
+                        </div>
+                        <div class="bg-white rounded-2xl p-6 shadow-md flex flex-col justify-between">
+                            <div class="flex justify-between items-center mb-2">
+                                <h3 class="text-xl font-semibold text-gray-600">Age of Financial Independence</h3>
+                                <div class="flex space-x-3">
+                                    <button id="edit-fi-age-assumptions-btn"
+                                        class="text-sm text-gray-500 hover:text-gray-700">
+                                        <i class="fas fa-pencil-alt fa-xl"></i>
+                                    </button>
+                                    <button class="info-btn" data-info="fi-age" title="What is this?"
+                                        class="text-sm text-gray-400 hover:text-indigo-500">
+                                        <i class="fas fa-question-circle"></i>
+                                        <span class="tooltip-text">How is this calculated?</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <p id="fi-age" class="text-4xl font-bold text-green-600 mt-2"></p>
+                            <p id="fi-message" class="text-sm text-gray-500"></p>
+                        </div>
+                        <div id="zero-age-card"
+                            class="bg-white rounded-2xl p-6 shadow-md flex flex-col justify-between">
+                            <div class="flex justify-between items-center mb-2">
+                                <h3 class="text-xl font-semibold text-gray-600">Net Worth Hits $0</h3>
+                                <div class="flex space-x-3">
+                                    <button id="edit-lifespan-assumptions-btn"
+                                        class="text-sm text-gray-500 hover:text-gray-700">
+                                        <i class="fas fa-pencil-alt fa-xl"></i>
+                                    </button>
+                                    <button class="info-btn" data-info="zero-age" title="What is this?"
+                                        class="text-sm text-gray-400 hover:text-indigo-500">
+                                        <i class="fas fa-question-circle"></i>
+                                        <span class="tooltip-text">How is this calculated?</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <p id="zero-age" class="text-4xl font-bold text-rose-600 mt-2"></p>
+                            <p class="text-sm text-gray-500" id="zero-age-message"></p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl p-6 shadow-md mt-8">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-4">Projection Charts</h2>
+                            <button id="add-life-event-btn-charts"
+                                class="bg-indigo-600 text-white px-4 py-2 rounded-lg shadow-sm hover:bg-indigo-700 hover:scale-105 transition-transform duration-200">
+                                Add a Life Event
+                            </button>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-700 mb-2">Net Worth Over Time</h3>
+                                <div class="chart-container">
+                                    <canvas id="netWorthChart"></canvas>
+                                </div>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-700 mb-2">Yearly Financials</h3>
+                                <div class="chart-container">
+                                    <canvas id="yearlyFinancialsChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl p-6 shadow-md mt-8">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-2xl font-bold text-gray-800">Life Events</h2>
+                            <button id="add-life-event-btn"
+                                class="bg-indigo-600 text-white px-4 py-2 rounded-lg shadow-sm hover:bg-indigo-700 hover:scale-105 transition-transform duration-200">
+                                Add a Life Event
+                            </button>
+                        </div>
+                        <p class="text-gray-600 mb-2 text-base">What's next for you? From a new job to a paying tuition,
+                            add life events to visualize their impact on your finances.</p>
+                        <div id="life-events-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                            </div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl p-6 shadow-md mt-8 overflow-x-auto">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-2xl font-bold text-gray-800">Detailed Projection</h2>
+                            </div>
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Age</th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Year</th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Income</th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Taxes</th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Expenses</th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Savings</th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Events</th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Net Worth</th>
+                                    <th scope="col" class="relative px-6 py-3"><span class="sr-only">Edit</span></th>
+                                </tr>
+                            </thead>
+                            <tbody id="projection-table-body" class="bg-white divide-y divide-gray-200">
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="life-event-modal"
+        class="modal-overlay hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50">
+        <div class="bg-white p-6 rounded-lg shadow-xl max-w-lg w-full">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="life-event-title" class="text-2xl font-bold text-gray-800">Add New Life Event</h3>
+                <button class="close-modal-btn text-gray-400 hover:text-gray-600 text-3xl px-3 py-1">&times;</button>
+            </div>
+            <form id="life-event-form" class="space-y-4">
+                <div>
+                    <label for="event-name" class="block text-sm font-medium text-gray-700">Event Name</label>
+                    <input type="text" id="event-name" name="name" required
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                </div>
+                <div>
+                    <label for="event-startAge" class="block text-sm font-medium text-gray-700">Age</label>
+                    <input type="number" id="event-startAge" name="startAge" required
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Financial Change</label>
+                    <select id="event-change-type" name="changeType"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                        <option value="">Select...</option>
+                        <option value="income">Income</option>
+                        <option value="expenses">Expenses</option>
+                        <option value="taxRate">Tax Rate</option>
+                        <option value="oneTimeExpense">One-time Expense</option>
+                    </select>
+                </div>
+                <div id="change-inputs-container" class="mt-4 hidden space-y-2">
+                    <div id="income-change-fields" class="change-field hidden space-y-2">
+                        <label class="block text-sm font-medium text-gray-700">Income Change</label>
+                        <div class="flex items-center space-x-2">
+                            <select id="income-op" name="income-op"
+                                class="mt-1 block rounded-md border-gray-300 shadow-sm">
+                                <option value="set">Set to</option>
+                                <option value="change">Change by</option>
+                            </select>
+                            <input type="number" id="income-value" name="income-value" placeholder="Value"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                            <select id="income-type" name="income-type"
+                                class="mt-1 block rounded-md border-gray-300 shadow-sm">
+                                <option value="amount">$</option>
+                                <option value="percent">%</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="expenses-change-fields" class="change-field hidden space-y-2">
+                        <label class="block text-sm font-medium text-gray-700">Expenses Change</label>
+                        <div class="flex items-center space-x-2">
+                            <select id="expenses-op" name="expenses-op"
+                                class="mt-1 block rounded-md border-gray-300 shadow-sm">
+                                <option value="set">Set to</option>
+                                <option value="change">Change by</option>
+                            </select>
+                            <input type="number" id="expenses-value" name="expenses-value" placeholder="Value"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                            <select id="expenses-type" name="expenses-type"
+                                class="mt-1 block rounded-md border-gray-300 shadow-sm">
+                                <option value="amount">$</option>
+                                <option value="percent">%</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="taxRate-change-fields" class="change-field hidden space-y-2">
+                        <label class="block text-sm font-medium text-gray-700">Tax Rate Change</label>
+                        <div class="flex items-center space-x-2">
+                            <select id="taxRate-op" name="taxRate-op"
+                                class="mt-1 block rounded-md border-gray-300 shadow-sm">
+                                <option value="set">Set to</option>
+                                <option value="change">Change by</option>
+                            </select>
+                            <input type="number" id="taxRate-value" name="taxRate-value" placeholder="Value"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                            <span class="text-sm font-medium text-gray-700">%</span>
+                        </div>
+                    </div>
+
+                    <div id="oneTimeExpense-change-fields" class="change-field hidden space-y-2">
+                        <label class="block text-sm font-medium text-gray-700">One-time Expense Amount ($)</label>
+                        <input type="number" id="oneTimeExpense-value" name="oneTimeExpense-value"
+                            placeholder="e.g. 25000" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                    </div>
+                </div>
+                <div id="duration-field" class="hidden">
+                    <label for="event-duration" class="block text-sm font-medium text-gray-700">Duration (Years)</label>
+                    <input type="number" id="event-duration" name="duration"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                        placeholder="e.g. 5 or -1 for until death">
+                </div>
+                <div class="flex justify-end pt-4">
+                    <button type="submit" id="life-event-submit-btn"
+                        class="bg-indigo-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-indigo-700 transition">
+                        Add Event
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="assumptions-modal"
+        class="modal-overlay hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50">
+        <div class="bg-white p-8 rounded-lg shadow-xl max-w-lg w-full">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-2xl font-bold text-gray-800">Edit Assumptions</h3>
+                <button class="close-modal-btn text-gray-400 hover:text-gray-600 text-3xl px-3 py-1">&times;</button>
+            </div>
+            <form id="assumptions-form" class="space-y-6">
+                <div>
+                    <label for="annualIncomeIncrease" class="block text-sm font-medium text-gray-700">Annual Income
+                        Increase (%)</label>
+                    <input type="number" id="annualIncomeIncrease" name="annualIncomeIncrease" required step="0.1"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-150 ease-in-out">
+                </div>
+                <div>
+                    <label for="investmentReturnRate" class="block text-sm font-medium text-gray-700">Annual Investment
+                        Return Rate (%)</label>
+                    <input type="number" id="investmentReturnRate" name="investmentReturnRate" required step="0.1"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-150 ease-in-out">
+                </div>
+                <div>
+                    <label for="inflationRate" class="block text-sm font-medium text-gray-700">Annual Inflation Rate
+                        (%)</label>
+                    <input type="number" id="inflationRate" name="inflationRate" required step="0.1"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-150 ease-in-out">
+                </div>
+                <div>
+                    <label for="safeWithdrawalRate" class="block text-sm font-medium text-gray-700">Safe Withdrawal Rate
+                        (%)</label>
+                    <input type="number" id="safeWithdrawalRate" name="safeWithdrawalRate" required step="0.1"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-150 ease-in-out">
+                </div>
+                <div>
+                    <label for="retirementAge" class="block text-sm font-medium text-gray-700">Target Retirement
+                        Age</label>
+                    <input type="number" id="retirementAge" name="retirementAge" required
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-150 ease-in-out">
+                </div>
+                <div>
+                    <label for="retirementExpenses" class="block text-sm font-medium text-gray-700">Annual Expenses in
+                        Retirement ($)</label>
+                    <input type="number" id="retirementExpenses" name="retirementExpenses" required
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-150 ease-in-out">
+                </div>
+                <div>
+                    <label for="retirementIncome" class="block text-sm font-medium text-gray-700">Annual Income in
+                        Retirement ($)</label>
+                    <input type="number" id="retirementIncome" name="retirementIncome" required
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-150 ease-in-out">
+                </div>
+                <div>
+                    <label for="lifeExpectancy" class="block text-sm font-medium text-gray-700">Life Expectancy</label>
+                    <input type="number" id="lifeExpectancy" name="lifeExpectancy" required
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-150 ease-in-out">
+                </div>
+                <button type="submit"
+                    class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-lg font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out">
+                    Save Assumptions
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div id="retirement-assumptions-modal"
+        class="modal-overlay hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50">
+        <div class="bg-white p-8 rounded-lg shadow-xl max-w-lg w-full">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-2xl font-bold text-gray-800">Edit Retirement Assumptions</h3>
+                <button class="close-modal-btn text-gray-400 hover:text-gray-600 text-3xl px-3 py-1">&times;</button>
+            </div>
+            <form id="retirement-assumptions-form" class="space-y-6">
+                <div>
+                    <label for="retirementSafeWithdrawalRate" class="block text-sm font-medium text-gray-700">Safe
+                        Withdrawal Rate (%)</label>
+                    <input type="number" id="retirementSafeWithdrawalRate" name="safeWithdrawalRate" required step="0.1"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-150 ease-in-out">
+                </div>
+                <div>
+                    <label for="retirementRetirementAge" class="block text-sm font-medium text-gray-700">Target
+                        Retirement Age</label>
+                    <input type="number" id="retirementRetirementAge" name="retirementAge" required
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-150 ease-in-out">
+                </div>
+                <div>
+                    <label for="retirementRetirementExpenses" class="block text-sm font-medium text-gray-700">Annual
+                        Expenses in Retirement ($)</label>
+                    <input type="number" id="retirementRetirementExpenses" name="retirementExpenses" required
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-150 ease-in-out">
+                </div>
+                <div>
+                    <label for="retirementRetirementIncome" class="block text-sm font-medium text-gray-700">Annual
+                        Income in Retirement ($)</label>
+                    <input type="number" id="retirementRetirementIncome" name="retirementIncome" required
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-150 ease-in-out">
+                </div>
+                <div>
+                    <label for="retirementLifeExpectancy" class="block text-sm font-medium text-gray-700">Life
+                        Expectancy</label>
+                    <input type="number" id="retirementLifeExpectancy" name="lifeExpectancy" required
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-150 ease-in-out">
+                </div>
+                <button type="submit"
+                    class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-lg font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out">
+                    Save Changes
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div id="initial-data-modal"
+        class="modal-overlay hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50">
+        <div class="bg-white p-8 rounded-lg shadow-xl max-w-lg w-full">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-2xl font-bold text-gray-800">Edit Initial Data</h3>
+                <button class="close-modal-btn text-gray-400 hover:text-gray-600 text-3xl px-3 py-1">&times;</button>
+            </div>
+            <form id="initial-data-form" class="space-y-6">
+                <div>
+                    <label for="editNetWorth" class="block text-sm font-medium text-gray-700">Current Net Worth
+                        ($)</label>
+                    <input type="number" id="editNetWorth" name="netWorth" required
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-150 ease-in-out">
+                </div>
+                <div>
+                    <label for="editIncome" class="block text-sm font-medium text-gray-700">Current Annual Income
+                        ($)</label>
+                    <input type="number" id="editIncome" name="income" required
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-150 ease-in-out">
+                </div>
+                <div>
+                    <label for="editExpenses" class="block text-sm font-medium text-gray-700">Current Annual Expenses
+                        ($)</label>
+                    <input type="number" id="editExpenses" name="expenses" required
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-150 ease-in-out">
+                </div>
+                <div>
+                    <label for="editTaxFilingStatus" class="block text-sm font-medium text-gray-700">Tax Filing
+                        Status</label>
+                    <select id="editTaxFilingStatus" name="taxFilingStatus"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-150 ease-in-out">
+                        <option value="single">Single</option>
+                        <option value="married">Married Filing Jointly</option>
+                        <option value="headOfHousehold">Head of Household</option>
+                        <option value="custom">Custom Rate</option>
+                    </select>
+                </div>
+                <div id="editCustomTaxRateContainer" class="hidden">
+                    <label for="editCustomTaxRate" class="block text-sm font-medium text-gray-700">Custom Annual Tax
+                        Rate (Cumulative %)</label>
+                    <input type="number" id="editCustomTaxRate" name="customTaxRate"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-150 ease-in-out">
+                </div>
+                <div>
+                    <label for="editCurrentAge" class="block text-sm font-medium text-gray-700">Current Age</label>
+                    <input type="number" id="editCurrentAge" name="currentAge" required
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-150 ease-in-out">
+                </div>
+                <button type="submit"
+                    class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-lg font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out">
+                    Save Changes
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div id="info-modal"
+        class="modal-overlay hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50">
+        <div class="bg-white p-6 rounded-lg shadow-xl max-w-md w-full">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="info-modal-title" class="text-xl font-bold text-gray-800">Info</h3>
+                <button class="close-modal-btn text-gray-400 hover:text-gray-600 text-3xl px-3 py-1">&times;</button>
+            </div>
+            <div id="info-modal-content" class="text-gray-700 text-base"></div>
+        </div>
+    </div>
+
+    <script type="module" src="js/main.js"></script>
+
+</body>
+
+</html>

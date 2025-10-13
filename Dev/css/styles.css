@@ -1,0 +1,173 @@
+/* styles.css */
+body {
+    font-family: 'Inter', sans-serif;
+}
+
+.chart-container {
+    position: relative;
+    height: 400px;
+    width: 100%;
+}
+
+.event-link {
+    text-decoration: underline;
+    cursor: pointer;
+    color: #4C51BF;
+    /* Tailwind indigo-700 */
+}
+
+.dark-mode .event-link {
+    color: #a3bffa;
+    /* Tailwind indigo-300 for better contrast in dark mode */
+}
+
+/* Custom Tooltip Styles for the Expenses, Taxes and Savings columns */
+.has-tooltip {
+    position: relative;
+}
+
+.tooltip-text {
+    visibility: hidden;
+    opacity: 0;
+    background-color: #1f2937;
+    color: #ffffff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 8px 12px;
+    position: absolute;
+    z-index: 10;
+    bottom: 125%;
+    /* Position the tooltip above the container */
+    left: 50%;
+    transform: translateX(-50%);
+    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+}
+
+.has-tooltip:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
+
+.tooltip-text::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 5px;
+    border-style: solid;
+    border-color: #1f2937 transparent transparent transparent;
+}
+
+/* Custom styles for the top-right icons */
+.button-tooltip-container {
+    position: relative;
+    display: inline-block;
+}
+
+.button-tooltip-text {
+    visibility: hidden;
+    opacity: 0;
+    background-color: #1f2937;
+    color: #ffffff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 8px 12px;
+    position: absolute;
+    z-index: 10;
+    top: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    transition: opacity 0.3s ease-in-out;
+    white-space: nowrap;
+}
+
+.button-tooltip-container:hover .button-tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Dark Mode Specific Styles */
+.dark-mode {
+    background-color: #1a202c;
+    /* Tailwind gray-900 */
+    color: #e2e8f0;
+    /* Tailwind gray-200 */
+}
+
+.dark-mode .app-screen {
+    background-color: #1a202c;
+}
+
+.dark-mode .bg-white,
+.dark-mode .modal-overlay .bg-white {
+    background-color: #2d3748;
+    /* Tailwind gray-800 */
+    color: #e2e8f0;
+}
+
+.dark-mode .text-gray-800 {
+    color: #f7fafc;
+}
+
+.dark-mode .text-gray-600 {
+    color: #a0aec0;
+}
+
+.dark-mode .text-gray-700 {
+    color: #cbd5e0;
+}
+
+.dark-mode input,
+.dark-mode select {
+    background-color: #4a5568;
+    /* Tailwind gray-700 */
+    border-color: #4a5568;
+    color: #e2e8f0;
+}
+
+.dark-mode .border-gray-300 {
+    border-color: #4a5568;
+}
+
+.dark-mode .text-gray-500 {
+    color: #a0aec0;
+}
+
+.dark-mode .bg-gray-50 {
+    background-color: #2d3748;
+}
+
+.dark-mode .divide-gray-200 {
+    border-color: #4a5568;
+}
+
+.dark-mode .bg-gray-100 {
+    background-color: #1a202c;
+}
+
+.dark-mode .bg-gray-50 {
+    background-color: #2d3748;
+}
+
+.dark-mode .hover\:bg-gray-50:hover {
+    background-color: #4a5568;
+}
+
+.dark-mode .bg-red-100 {
+    background-color: #4c1111;
+}
+
+.dark-mode .text-gray-900 {
+    color: #f7fafc;
+}
+
+.milestone-row {
+    background-color: #d4f9cd;
+    /* Tailwind yellow-100 */
+}
+
+.dark-mode .milestone-row {
+    background-color: #436736 !important;
+    /* Tailwind yellow-800 for dark mode */
+}
