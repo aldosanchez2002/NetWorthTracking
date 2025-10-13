@@ -16,7 +16,8 @@ function applyDarkMode(enabled) {
     });
     document.querySelectorAll('.dark-icon').forEach(icon => {
         icon.classList.toggle('hidden', !enabled);
-        icon.style.color = enabled ? '#6366F1' : ''; // Indigo-500 for moon in dark mode
+        // Indigo-500 for moon in dark mode
+        icon.style.color = enabled ? '#6366F1' : '';
     });
 }
 
@@ -35,8 +36,17 @@ function loadDarkMode() {
 
 export function initializeDarkMode(chartInstances) {
     loadDarkMode();
-    document.getElementById('initial-screen-dark-mode-toggle').addEventListener('click', () => toggleDarkMode(chartInstances));
-    document.getElementById('dashboard-dark-mode-toggle').addEventListener('click', () => toggleDarkMode(chartInstances));
+    const initialScreenToggle = document.getElementById(
+        'initial-screen-dark-mode-toggle'
+    );
+    initialScreenToggle.addEventListener('click', () => {
+        toggleDarkMode(chartInstances);
+    });
+    const dashboardToggleId = 'dashboard-dark-mode-toggle';
+    const dashboardToggle = document.getElementById(dashboardToggleId);
+    dashboardToggle.addEventListener('click', () => {
+        toggleDarkMode(chartInstances);
+    });
 }
 
 export function updateChartColors({ netWorthChart, yearlyFinancialsChart }) {
@@ -46,20 +56,42 @@ export function updateChartColors({ netWorthChart, yearlyFinancialsChart }) {
         const gridColor = '#4a5568';
         const textColor = '#cbd5e0';
 
-        netWorthChart.data.datasets[0].borderColor = darkModeState.enabled ? darkColor : lightColor;
-        netWorthChart.data.datasets[0].backgroundColor = darkModeState.enabled ? 'rgba(102, 126, 234, 0.2)' : 'rgba(66, 153, 225, 0.2)';
-        netWorthChart.options.scales.y.grid.color = darkModeState.enabled ? gridColor : '#E2E8F0';
-        netWorthChart.options.scales.x.grid.color = darkModeState.enabled ? gridColor : '#E2E8F0';
-        netWorthChart.options.scales.y.ticks.color = darkModeState.enabled ? textColor : '#6B7280';
-        netWorthChart.options.scales.x.ticks.color = darkModeState.enabled ? textColor : '#6B7280';
+        const isDark = darkModeState.enabled;
+        netWorthChart.data.datasets[0].borderColor = isDark
+            ? darkColor
+            : lightColor;
+        netWorthChart.data.datasets[0].backgroundColor = isDark
+            ? 'rgba(102, 126, 234, 0.2)'
+            : 'rgba(66, 153, 225, 0.2)';
+        netWorthChart.options.scales.y.grid.color = isDark
+            ? gridColor
+            : '#E2E8F0';
+        netWorthChart.options.scales.x.grid.color = isDark
+            ? gridColor
+            : '#E2E8F0';
+        netWorthChart.options.scales.y.ticks.color = isDark
+            ? textColor
+            : '#6B7280';
+        netWorthChart.options.scales.x.ticks.color = isDark
+            ? textColor
+            : '#6B7280';
         netWorthChart.update();
     }
 
     if (yearlyFinancialsChart) {
-        yearlyFinancialsChart.options.scales.y.grid.color = darkModeState.enabled ? '#4a5568' : '#E2E8F0';
-        yearlyFinancialsChart.options.scales.x.grid.color = darkModeState.enabled ? '#4a5568' : '#E2E8F0';
-        yearlyFinancialsChart.options.scales.y.ticks.color = darkModeState.enabled ? '#cbd5e0' : '#6B7280';
-        yearlyFinancialsChart.options.scales.x.ticks.color = darkModeState.enabled ? '#cbd5e0' : '#6B7280';
+        const isDark = darkModeState.enabled;
+        yearlyFinancialsChart.options.scales.y.grid.color = isDark
+            ? '#4a5568'
+            : '#E2E8F0';
+        yearlyFinancialsChart.options.scales.x.grid.color = isDark
+            ? '#4a5568'
+            : '#E2E8F0';
+        yearlyFinancialsChart.options.scales.y.ticks.color = isDark
+            ? '#cbd5e0'
+            : '#6B7280';
+        yearlyFinancialsChart.options.scales.x.ticks.color = isDark
+            ? '#cbd5e0'
+            : '#6B7280';
         yearlyFinancialsChart.update();
     }
 }

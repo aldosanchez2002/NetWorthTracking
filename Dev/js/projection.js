@@ -2,13 +2,31 @@
 
 const TAX_BRACKETS = {
     single: [
-        { rate: 0.10, min: 0, max: 11925 }, { rate: 0.12, min: 11926, max: 48475 }, { rate: 0.22, min: 48476, max: 103350 }, { rate: 0.24, min: 103351, max: 197300 }, { rate: 0.32, min: 197301, max: 250525 }, { rate: 0.35, min: 250526, max: 626350 }, { rate: 0.37, min: 626351, max: Infinity }
+        { rate: 0.10, min: 0, max: 11925 },
+        { rate: 0.12, min: 11926, max: 48475 },
+        { rate: 0.22, min: 48476, max: 103350 },
+        { rate: 0.24, min: 103351, max: 197300 },
+        { rate: 0.32, min: 197301, max: 250525 },
+        { rate: 0.35, min: 250526, max: 626350 },
+        { rate: 0.37, min: 626351, max: Infinity }
     ],
     married: [
-        { rate: 0.10, min: 0, max: 23850 }, { rate: 0.12, min: 23851, max: 96950 }, { rate: 0.22, min: 96951, max: 206700 }, { rate: 0.24, min: 206701, max: 394600 }, { rate: 0.32, min: 394601, max: 501050 }, { rate: 0.35, min: 501051, max: 751600 }, { rate: 0.37, min: 751601, max: Infinity }
+        { rate: 0.10, min: 0, max: 23850 },
+        { rate: 0.12, min: 23851, max: 96950 },
+        { rate: 0.22, min: 96951, max: 206700 },
+        { rate: 0.24, min: 206701, max: 394600 },
+        { rate: 0.32, min: 394601, max: 501050 },
+        { rate: 0.35, min: 501051, max: 751600 },
+        { rate: 0.37, min: 751601, max: Infinity }
     ],
     headOfHousehold: [
-        { rate: 0.10, min: 0, max: 17000 }, { rate: 0.12, min: 17001, max: 64850 }, { rate: 0.22, min: 64851, max: 103350 }, { rate: 0.24, min: 103351, max: 197300 }, { rate: 0.32, min: 197301, max: 250500 }, { rate: 0.35, min: 250501, max: 626350 }, { rate: 0.37, min: 626351, max: Infinity }
+        { rate: 0.10, min: 0, max: 17000 },
+        { rate: 0.12, min: 17001, max: 64850 },
+        { rate: 0.22, min: 64851, max: 103350 },
+        { rate: 0.24, min: 103351, max: 197300 },
+        { rate: 0.32, min: 197301, max: 250500 },
+        { rate: 0.35, min: 250501, max: 626350 },
+        { rate: 0.37, min: 626351, max: Infinity }
     ]
 };
 
@@ -33,7 +51,22 @@ function calculateTax(income, filingStatus, customTaxRate) {
 
 export function runProjection(state) {
     const projection = [];
-    let { netWorth, income, expenses, customTaxRate, taxFilingStatus, currentAge, annualIncomeIncrease, investmentReturnRate, inflationRate, safeWithdrawalRate, retirementAge, retirementExpenses, retirementIncome, lifeExpectancy } = state.initialData;
+    let {
+        netWorth,
+        income,
+        expenses,
+        customTaxRate,
+        taxFilingStatus,
+        currentAge,
+        annualIncomeIncrease,
+        investmentReturnRate,
+        inflationRate,
+        safeWithdrawalRate,
+        retirementAge,
+        retirementExpenses,
+        retirementIncome,
+        lifeExpectancy
+    } = state.initialData;
 
     let effectiveNetWorth = netWorth;
     let fiAge = null;
@@ -66,25 +99,52 @@ export function runProjection(state) {
 
         let effectiveIncome = baseIncome;
         let effectiveExpenses = baseExpenses;
-        let effectiveTaxRate = taxFilingStatus === 'custom' ? customTaxRate / 100 : calculateTax(baseIncome, taxFilingStatus, customTaxRate) / baseIncome;
+        let effectiveTaxRate = 0;
+        if (taxFilingStatus === 'custom') {
+            effectiveTaxRate = customTaxRate / 100;
+        } else {
+            effectiveTaxRate = baseIncome ? (calculateTax(baseIncome, taxFilingStatus, customTaxRate) / baseIncome) : 0;
+        }
         let oneTimeExpense = 0;
 
         const eventsForThisYear = eventsByAge[age] || [];
 
         eventsForThisYear.forEach(event => {
-            const eventDuration = (event.duration === null || event.duration === -1) ? (lifeExpectancy - event.startAge) : event.duration;
+            const eventDuration = (event.duration === null || event.duration === -1)
+                ? (lifeExpectancy - event.startAge)
+                : event.duration;
             if (age >= event.startAge && age < event.startAge + eventDuration) {
                 if (event.changeType === 'income') {
                     if (event.operation === 'set') {
-                        effectiveIncome = (event.valueType === 'percent') ? baseIncome * (event.value / 100) : event.value;
+                        if (event.valueType === 'percent') {
+                            effectiveIncome = baseIncome * (event.value / 100);
+                        } else {
+                            effectiveIncome = event.value;
+                        }
                     } else { // 'change'
-                        effectiveIncome += (event.valueType === 'percent') ? baseIncome * (event.value / 100) : event.value;
+                        if (event.valueType === 'percent') {
+                            effectiveIncome += baseIncome * (event.value / 100);
+                        } else {
+                            effectiveIncome += event.value;
+                        }
                     }
                 } else if (event.changeType === 'expenses') {
                     if (event.operation === 'set') {
-                        effectiveExpenses = (event.valueType === 'percent') ? (effectiveIncome - calculateTax(effectiveIncome, taxFilingStatus, customTaxRate)) * (event.value / 100) : event.value;
+                        effectiveExpenses = (event.valueType === 'percent')
+                            ? (effectiveIncome - calculateTax(
+                                effectiveIncome,
+                                taxFilingStatus,
+                                customTaxRate
+                            )) * (event.value / 100)
+                            : event.value;
                     } else { // 'change'
-                        effectiveExpenses += (event.valueType === 'percent') ? (effectiveIncome - calculateTax(effectiveIncome, taxFilingStatus, customTaxRate)) * (event.value / 100) : event.value;
+                        effectiveExpenses += (event.valueType === 'percent')
+                            ? (effectiveIncome - calculateTax(
+                                effectiveIncome,
+                                taxFilingStatus,
+                                customTaxRate
+                            )) * (event.value / 100)
+                            : event.value;
                     }
                 } else if (event.changeType === 'taxRate') {
                     if (event.operation === 'set') {
@@ -98,7 +158,13 @@ export function runProjection(state) {
             }
         });
 
-        const taxesPaid = (taxFilingStatus === 'custom') ? effectiveIncome * effectiveTaxRate : calculateTax(effectiveIncome, taxFilingStatus, customTaxRate);
+        const taxesPaid = (taxFilingStatus === 'custom') 
+        ? effectiveIncome * effectiveTaxRate 
+        : calculateTax(
+            effectiveIncome, 
+            taxFilingStatus, 
+            customTaxRate
+        );
 
         const netIncome = effectiveIncome - taxesPaid;
         const savings = netIncome - effectiveExpenses;
@@ -114,7 +180,14 @@ export function runProjection(state) {
         }
 
         projection.push({
-            year, age, income: effectiveIncome, expenses: effectiveExpenses, taxes: taxesPaid, taxRate: effectiveTaxRate, savings, oneTimeExpense, netWorth: effectiveNetWorth
+            year, 
+            age, 
+            income: effectiveIncome, 
+            expenses: effectiveExpenses, 
+            taxes: taxesPaid, 
+            taxRate: effectiveTaxRate, 
+            savings, oneTimeExpense, 
+            netWorth: effectiveNetWorth
         });
     }
 

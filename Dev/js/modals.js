@@ -13,7 +13,8 @@ export function openLifeEventModal(state, eventData = {}, eventIndex = null) {
     form.reset();
     form.dataset.index = eventIndex !== null ? eventIndex : '';
 
-    document.getElementById('life-event-title').innerText = eventIndex !== null ? 'Edit Life Event' : 'Add New Life Event';
+    const lifeEventTitle = eventIndex !== null ? 'Edit Life Event' : 'Add New Life Event';
+    document.getElementById('life-event-title').innerText = lifeEventTitle;
     document.getElementById('life-event-submit-btn').innerText = eventIndex !== null ? 'Save Event' : 'Add Event';
 
     document.querySelectorAll('.change-field').forEach(field => field.classList.add('hidden'));
@@ -85,21 +86,31 @@ export function openInitialDataModal(state) {
     document.getElementById('editTaxFilingStatus').value = state.initialData.taxFilingStatus;
     document.getElementById('editCustomTaxRate').value = state.initialData.customTaxRate;
     document.getElementById('editCurrentAge').value = state.initialData.currentAge;
-    document.getElementById('editCustomTaxRateContainer').classList.toggle('hidden', state.initialData.taxFilingStatus !== 'custom');
+    const customTaxRateContainer = document.getElementById('editCustomTaxRateContainer');
+    const isCustomTaxStatus = state.initialData.taxFilingStatus !== 'custom';
+    customTaxRateContainer.classList.toggle('hidden', isCustomTaxStatus);
     openModal('initial-data-modal');
 }
 
-const INFO_TEXTS = {
-    'current-net-worth': 'Your Current Net Worth is the total value of what you own minus what you owe. It is sourced from your initial financial data.',
-    'projected-net-worth': 'Your Projected Net Worth at Retirement is an estimate of your total wealth when you reach the target retirement age. This calculation considers your income, expenses, inflation, and investment growth over time.\n\nSee the Detailed Projection Table for year-by-year breakdowns.',
-    'savings-target': 'The Yearly Savings Target is the amount you should aim to save each year. It is the difference between your after-tax income and your expenses.\n\nFormula:\nIncome - Taxes - Expenses',
-    'fi-number': 'The Net Worth Required to Retire, also known as your "Financial Independence Number," is the investment amount you need to generate enough passive income to cover your yearly expenses.\n\nFormula:\nAnnual Retirement Expenses / Safe Withdrawal Rate',
-    'fi-age': 'Your Age of Financial Independence is the age when your investments are large enough to cover your expenses, allowing you to stop working. This is when your Net Worth is equal to your Net Worth Required to Retire.\n\nSee the Detailed Projection Table for year-by-year breakdowns.',
-    'zero-age': 'The Net Worth Hits $0 age is a projection of when your savings could run out, based on your retirement spending. This is a crucial number to monitor for long-term planning.\n\nSee the Detailed Projection Table for year-by-year breakdowns.',
-};
+let _INFO_TEXTS_CACHE = null;
+async function loadInfoTexts() {
+    if (_INFO_TEXTS_CACHE) return _INFO_TEXTS_CACHE;
+    try {
+        const res = await fetch('./js/info_texts.txt');
+        if (!res.ok) throw new Error('Failed to load info_texts');
+        const text = await res.text();
+        _INFO_TEXTS_CACHE = JSON.parse(text);
+        return _INFO_TEXTS_CACHE;
+    } catch (err) {
+        console.error('Error loading info texts:', err);
+        _INFO_TEXTS_CACHE = {};
+        return _INFO_TEXTS_CACHE;
+    }
+}
 
-export function openInfoModal(type) {
+export async function openInfoModal(type) {
     document.getElementById('info-modal-title').innerText = 'Info';
-    document.getElementById('info-modal-content').innerText = INFO_TEXTS[type] || '';
+    const info = await loadInfoTexts();
+    document.getElementById('info-modal-content').innerText = info[type] || '';
     openModal('info-modal');
 }

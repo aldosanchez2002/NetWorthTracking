@@ -1,0 +1,8 @@
+{
+  "current-net-worth": "Your Current Net Worth is the total value of what you own minus what you owe. It is sourced from your initial financial data.",
+  "projected-net-worth": "Your Projected Net Worth at Retirement is an estimate of your total wealth when you reach the target retirement age. This calculation considers your income, expenses, inflation, and investment growth over time.\n\nSee the Detailed Projection Table for year-by-year breakdowns.",
+  "savings-target": "The Yearly Savings Target is the amount you should aim to save each year. It is the difference between your after-tax income and your expenses.\n\nFormula:\nIncome - Taxes - Expenses",
+  "fi-number": "The Net Worth Required to Retire, also known as your \"Financial Independence Number,\" is the investment amount you need to generate enough passive income to cover your yearly expenses.\n\nFormula:\nAnnual Retirement Expenses / Safe Withdrawal Rate",
+  "fi-age": "Your Age of Financial Independence is the age when your investments are large enough to cover your expenses, allowing you to stop working. This is when your Net Worth is equal to your Net Worth Required to Retire.\n\nSee the Detailed Projection Table for year-by-year breakdowns.",
+  "zero-age": "The Net Worth Hits $0 age is a projection of when your savings could run out, based on your retirement spending. This is a crucial number to monitor for long-term planning.\n\nSee the Detailed Projection Table for year-by-year breakdowns."
+}

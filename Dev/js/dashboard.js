@@ -15,9 +15,18 @@ function renderLifeEvents(state) {
     list.innerHTML = '';
     state.lifeEvents.forEach((event, index) => {
         const li = document.createElement('div');
-        li.className = 'flex items-center justify-between p-4 my-2 bg-gray-100 dark:bg-gray-100 rounded-lg shadow';
+        li.className =
+            'flex items-center justify-between ' +
+            'p-4 my-2 ' +
+            'bg-gray-100 dark:bg-gray-100 ' +
+            'rounded-lg shadow';
         const changeText = getChangeDescription(event);
-        const durationText = (event.duration === null || event.duration === -1) ? 'Lasts until death' : `${event.duration} years`;
+        let durationText;
+        if (event.duration === null || event.duration === -1) {
+            durationText = 'Lasts until death';
+        } else {
+            durationText = `${event.duration} years`;
+        }
         let timeFrameText = (event.changeType === 'oneTimeExpense')
             ? `Happens at age ${event.startAge}`
             : `Starts at age ${event.startAge}, lasts ${durationText}.`;
@@ -25,11 +34,27 @@ function renderLifeEvents(state) {
         li.innerHTML = `
             <div class="flex-1">
                 <h4 class="font-semibold text-gray-800">${event.name}</h4>
-                <p class="text-sm text-gray-600">${timeFrameText}<br>${changeText}</p>
+                <p class="text-sm text-gray-600">
+                    ${timeFrameText}<br>
+                    ${changeText}
+                </p>
             </div>
             <div>
-                <button class="edit-event-btn text-blue-500 hover:text-blue-700 font-semibold px-2" data-index="${index}" data-event-id="${event.id}">Edit</button>
-                ${event.isDeletable ? `<button class="delete-event-btn text-red-500 hover:text-red-700 font-semibold px-2" data-index="${index}">Delete</button>` : ''}
+                <button 
+                    class="edit-event-btn text-blue-500 hover:text-blue-700 font-semibold px-2" 
+                    data-index="${index}" 
+                    data-event-id="${event.id}">
+                    Edit
+                </button>
+                ${
+                    event.isDeletable
+                        ? `<button 
+                            class="delete-event-btn text-red-500 hover:text-red-700 font-semibold px-2" 
+                            data-index="${index}">
+                            Delete
+                        </button>`
+                        : ''
+                }
             </div>`;
         list.appendChild(li);
     });
@@ -40,8 +65,16 @@ function getChangeDescription(event) {
         return `Deducts a one-time expense of ${formatCurrency(event.value)}.`;
     }
     const opText = event.operation === 'set' ? 'set to' : 'change by';
-    const valueText = event.valueType === 'percent' ? `${event.value}%` : formatCurrency(event.value);
-    let targetText = event.changeType.charAt(0).toUpperCase() + event.changeType.slice(1);
+    let valueText;
+    if (event.valueType === 'percent') {
+        valueText = `${event.value}%`;
+    } else {
+        valueText = formatCurrency(event.value);
+    }
+    const changeType = event.changeType;
+    const firstChar = changeType.charAt(0).toUpperCase();
+    const restChars = changeType.slice(1);
+    let targetText = firstChar + restChars;
     if (targetText === 'TaxRate') targetText = 'Tax Rate';
     return `${targetText} ${opText} ${valueText}`;
 }
@@ -62,25 +95,58 @@ function renderProjectionTable(state) {
         let milestoneIcon = '';
         let isMilestoneRow = false;
         if (yearData.netWorth >= 1000000 && (index === 0 || state.projection[index - 1].netWorth < 1000000)) {
-            milestoneIcon = `<span class="has-tooltip" style="margin-left:4px; font-size:1.3em;">🤑<span class="tooltip-text">Millionaire Milestone</span></span>`;
+            milestoneIcon = `
+                <span class="has-tooltip" style="margin-left:4px; font-size:1.3em;">
+                    🤑
+                    <span class="tooltip-text">Millionaire Milestone</span>
+                </span>
+            `;
             isMilestoneRow = true;
         }
-        if (yearData.netWorth >= 10000000 && (index === 0 || state.projection[index - 1].netWorth < 10000000)) {
-            milestoneIcon += `<span class="has-tooltip" style="margin-left:4px; font-size:1.3em;">🤑<span class="tooltip-text">Decamilionaire Milestone</span></span>`;
+        const isDecaMillionaire = yearData.netWorth >= 10000000;
+        const prevNotDecaMillionaire = index === 0 || state.projection[index - 1].netWorth < 10000000;
+        if (isDecaMillionaire && prevNotDecaMillionaire) {
+            milestoneIcon += `
+                <span class="has-tooltip" style="margin-left:4px; font-size:1.3em;">
+                    🤑
+                    <span class="tooltip-text">Decamilionaire Milestone</span>
+                </span>
+            `;
             isMilestoneRow = true;
         }
         if (isMilestoneRow) rowClass += ' milestone-row';
-        if (index > 0 && yearData.netWorth < state.projection[index - 1].netWorth) rowClass += ' bg-red-100 dark:bg-red-900';
+        if (index > 0 && yearData.netWorth < state.projection[index - 1].netWorth) {
+            rowClass += ' bg-red-100 dark:bg-red-900';
+        }
 
         const eventsForYear = state.lifeEvents
             .filter(event => event.startAge === yearData.age)
-            .map(event => `<span class="event-link" data-event-id="${event.id}" data-event-name="${event.name}">${event.name}</span>`)
+            .map(event => (
+                `<span class="event-link" 
+                    data-event-id="${event.id}" 
+                    data-event-name="${event.name}">
+                    ${event.name}
+                </span>`
+            ))
             .join(', ');
 
         const afterTaxIncome = yearData.income - yearData.taxes;
-        const expenseTooltipText = afterTaxIncome > 0 ? `${((yearData.expenses / afterTaxIncome) * 100).toFixed(1)}% of after-tax income` : "Expenses exceed after-tax income.";
-        const savingsTooltipText = afterTaxIncome > 0 ? `${((yearData.savings / afterTaxIncome) * 100).toFixed(1)}% of after-tax income` : "No after-tax income to save from.";
-        const taxTooltipText = `Tax Status: ${taxStatusDisplay} - ${yearData.income > 0 ? ((yearData.taxes / yearData.income) * 100).toFixed(2) : 0}% of income`;
+        let expenseTooltipText;
+        if (afterTaxIncome > 0) {
+            const expensePercent = ((yearData.expenses / afterTaxIncome) * 100).toFixed(1);
+            expenseTooltipText = `${expensePercent}% of after-tax income`;
+        } else {
+            expenseTooltipText = "Expenses exceed after-tax income.";
+        }
+        let savingsTooltipText;
+        if (afterTaxIncome > 0) {
+            const savingsPercent = ((yearData.savings / afterTaxIncome) * 100).toFixed(1);
+            savingsTooltipText = `${savingsPercent}% of after-tax income`;
+        } else {
+            savingsTooltipText = "No after-tax income to save from.";
+        }
+        const taxPercent = yearData.income > 0 ? ((yearData.taxes / yearData.income) * 100).toFixed(2) : 0;
+        const taxTooltipText = `Tax Status: ${taxStatusDisplay} - ${taxPercent}% of income`;
 
         const row = document.createElement('tr');
         row.className = rowClass;
@@ -88,11 +154,23 @@ function renderProjectionTable(state) {
             <td class="px-6 py-3 text-sm font-bold text-gray-900">${yearData.age}</td>
             <td class="px-6 py-3 text-sm font-medium text-gray-900">${yearData.year}</td>
             <td class="px-6 py-3 text-sm text-gray-500">${formatCurrency(yearData.income)}</td>
-            <td class="px-6 py-3 text-sm text-gray-500 has-tooltip">${formatCurrency(yearData.taxes)}<span class="tooltip-text">${taxTooltipText}</span></td>
-            <td class="px-6 py-3 text-sm text-gray-500 has-tooltip">${formatCurrency(yearData.expenses)}<span class="tooltip-text">${expenseTooltipText}</span></td>
-            <td class="px-6 py-3 text-sm text-gray-500 has-tooltip">${formatCurrency(yearData.savings)}<span class="tooltip-text">${savingsTooltipText}</span></td>
+            <td class="px-6 py-3 text-sm text-gray-500 has-tooltip">
+                ${formatCurrency(yearData.taxes)}
+                <span class="tooltip-text">${taxTooltipText}</span>
+            </td>
+            <td class="px-6 py-3 text-sm text-gray-500 has-tooltip">
+                ${formatCurrency(yearData.expenses)}
+                <span class="tooltip-text">${expenseTooltipText}</span>
+            </td>
+            <td class="px-6 py-3 text-sm text-gray-500 has-tooltip">
+                ${formatCurrency(yearData.savings)}
+                <span class="tooltip-text">${savingsTooltipText}</span>
+            </td>
             <td class="px-6 py-3 text-sm text-gray-500">${eventsForYear}</td>
-            <td class="px-6 py-3 text-sm text-gray-500 font-bold">${formatCurrency(yearData.netWorth)} ${milestoneIcon}</td>`;
+            <td class="px-6 py-3 text-sm text-gray-500 font-bold">
+                ${formatCurrency(yearData.netWorth)} 
+                ${milestoneIcon}
+            </td>`;
         tableBody.appendChild(row);
     });
 }
@@ -107,7 +185,17 @@ function renderCharts(state) {
 
     netWorthChart = new Chart(netWorthCtx, {
         type: 'line',
-        data: { labels, datasets: [{ label: 'Projected Net Worth', data: state.projection.map(p => p.netWorth), fill: true, tension: 0.1 }] },
+        data: { 
+            labels, 
+            datasets: [
+                { 
+                    label: 'Projected Net Worth', 
+                    data: state.projection.map(p => p.netWorth), 
+                    fill: true, 
+                    tension: 0.1 
+                }
+            ] 
+        },
         options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true }, x: {} } }
     });
     yearlyFinancialsChart = new Chart(yearlyFinancialsCtx, {
@@ -120,7 +208,14 @@ function renderCharts(state) {
                 { label: 'Savings', data: state.projection.map(p => p.savings), backgroundColor: '#48BB78' }
             ]
         },
-        options: { responsive: true, maintainAspectRatio: false, scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true } } }
+        options: { 
+            responsive: true, 
+            maintainAspectRatio: false, 
+            scales: { 
+                x: { stacked: true }, 
+                y: { stacked: true, beginAtZero: true } 
+            } 
+        }
     });
 }
 
@@ -164,7 +259,10 @@ export function updateUI(state) {
     } else {
         zeroAgeElement.innerText = formatAge(state.zeroAge);
         zeroAgeMessageElement.innerText = 'Based on retirement spending.';
-        zeroAgeElement.className = state.zeroAge < state.initialData.retirementAge ? 'text-4xl font-bold text-rose-600 mt-2' : 'text-4xl font-bold';
+        const zeroAgeClass = state.zeroAge < state.initialData.retirementAge
+            ? 'text-4xl font-bold text-rose-600 mt-2'
+            : 'text-4xl font-bold';
+        zeroAgeElement.className = zeroAgeClass;
     }
 
     const retirementMessage = document.getElementById('retirement-message');

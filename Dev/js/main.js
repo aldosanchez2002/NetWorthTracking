@@ -2,7 +2,14 @@
 
 import { DEFAULTS, saveDataToLocalStorage, loadDataFromLocalStorage } from './utils.js';
 import { initializeDarkMode } from './darkmode.js';
-import { openLifeEventModal, openAssumptionsModal, openRetirementAssumptionsModal, openInitialDataModal, openInfoModal, closeModal } from './modals.js';
+import {
+    openLifeEventModal,
+    openAssumptionsModal,
+    openRetirementAssumptionsModal,
+    openInitialDataModal,
+    openInfoModal,
+    closeModal
+} from './modals.js';
 import { renderInitialScreen, toggleCustomTaxRateInput } from './initialScreen.js';
 import { updateUI, getChartInstances } from './dashboard.js';
 
@@ -103,15 +110,14 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('retirement-assumptions-form').addEventListener('submit', (e) => {
         e.preventDefault();
         const form = e.target;
-        state.initialData = { ...state.initialData,
-            safeWithdrawalRate: parseFloat(form.retirementSafeWithdrawalRate.value),
-            retirementAge: parseInt(form.retirementRetirementAge.value, 10),
-            retirementExpenses: parseFloat(form.retirementRetirementExpenses.value),
-            retirementIncome: parseFloat(form.retirementRetirementIncome.value),
-            lifeExpectancy: parseInt(form.retirementLifeExpectancy.value, 10)
-        };
-        closeModal('retirement-assumptions-modal');
+        state.initialData.retirementAge = parseInt(form.retirementAge.value);
+        state.initialData.retirementExpenses = parseFloat(form.retirementExpenses.value);
+        state.initialData.retirementIncome = parseFloat(form.retirementIncome.value);
+        state.initialData.safeWithdrawalRate = parseFloat(form.safeWithdrawalRate.value);
+        state.initialData.lifeExpectancy = parseInt(form.lifeExpectancy.value);
         handleStateUpdate();
+        closeModal('retirement-assumptions-modal');
+
     });
 
     // Initial Data Form (Edit)
@@ -136,7 +142,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const form = e.target;
         const index = form.dataset.index;
         const changeType = form.changeType.value;
-        let newEvent = { name: form.name.value, startAge: parseInt(form.startAge.value, 10), changeType, isDeletable: true };
+        let newEvent = {
+            name: form.name.value,
+            startAge: parseInt(form.startAge.value, 10),
+            changeType,
+            isDeletable: true
+        };
         
         if (changeType === 'oneTimeExpense') {
             newEvent.duration = 1;
@@ -163,10 +174,20 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('add-life-event-btn').addEventListener('click', () => openLifeEventModal(state));
     document.getElementById('add-life-event-btn-charts').addEventListener('click', () => openLifeEventModal(state));
     document.getElementById('edit-assumptions-btn').addEventListener('click', () => openAssumptionsModal(state));
-    document.getElementById('edit-retirement-assumptions-btn').addEventListener('click', () => openRetirementAssumptionsModal(state));
-    document.getElementById('edit-fi-assumptions-btn').addEventListener('click', () => openRetirementAssumptionsModal(state));
-    document.getElementById('edit-fi-age-assumptions-btn').addEventListener('click', () => openRetirementAssumptionsModal(state));
-    document.getElementById('edit-lifespan-assumptions-btn').addEventListener('click', () => openRetirementAssumptionsModal(state));
+    document
+        .getElementById('edit-retirement-assumptions-btn')
+        .addEventListener('click', () => 
+            openRetirementAssumptionsModal(state)
+        );
+    document
+        .getElementById('edit-fi-assumptions-btn')
+        .addEventListener('click', () => openRetirementAssumptionsModal(state));
+    document
+        .getElementById('edit-fi-age-assumptions-btn')
+        .addEventListener('click', () => openRetirementAssumptionsModal(state));
+    document
+        .getElementById('edit-lifespan-assumptions-btn')
+        .addEventListener('click', () => openRetirementAssumptionsModal(state));
     
     document.getElementById('restart-session-btn').addEventListener('click', () => {
         if (confirm("Are you sure you want to restart? All your data will be lost.")) {
@@ -191,12 +212,20 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Dynamic Input Toggling
-    document.getElementById('taxFilingStatus').addEventListener('change', () => toggleCustomTaxRateInput('taxFilingStatus', 'customTaxRateContainer'));
-    document.getElementById('editTaxFilingStatus').addEventListener('change', () => toggleCustomTaxRateInput('editTaxFilingStatus', 'editCustomTaxRateContainer'));
+    const taxFilingStatusElem = document.getElementById('taxFilingStatus');
+    taxFilingStatusElem.addEventListener('change', () => 
+        toggleCustomTaxRateInput('taxFilingStatus', 'customTaxRateContainer')
+    );
+    document
+        .getElementById('editTaxFilingStatus')
+        .addEventListener('change', () => 
+            toggleCustomTaxRateInput('editTaxFilingStatus', 'editCustomTaxRateContainer')
+        );
     document.getElementById('event-change-type').addEventListener('change', (e) => {
         const changeType = e.target.value;
         document.querySelectorAll('.change-field').forEach(field => field.classList.add('hidden'));
-        document.getElementById('duration-field').classList.toggle('hidden', changeType === 'oneTimeExpense' || !changeType);
+        const shouldHideDuration = changeType === 'oneTimeExpense' || !changeType;
+        document.getElementById('duration-field').classList.toggle('hidden', shouldHideDuration);
         if (changeType) {
             document.getElementById('change-inputs-container').classList.remove('hidden');
             document.getElementById(`${changeType}-change-fields`).classList.remove('hidden');
